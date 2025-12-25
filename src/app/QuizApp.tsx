@@ -16,18 +16,11 @@ const EMOJI_SECTION = "📚";
 const EMOJI_PROGRESS = "📊";
 const EMOJI_DONE = "🎉";
 
-const COLUMNS = 5;
-
-function loadQuestions() {
-  // This will be replaced by fetch in the main component
-  return [];
-}
-
-function groupBySection(questions: any[]) {
-  const map = new Map();
+function groupBySection(questions: QuestionType[]): Map<string, QuestionType[]> {
+  const map = new Map<string, QuestionType[]>();
   for (const q of questions) {
     if (!map.has(q.section)) map.set(q.section, []);
-    map.get(q.section).push(q);
+    map.get(q.section)!.push(q);
   }
   return map;
 }
@@ -51,7 +44,7 @@ export default function QuizApp() {
           setStatus(JSON.parse(savedStatus));
         } else {
           setStatus(
-            data.reduce((acc: Record<number, "correct" | "fail" | "pending">, _q: any, i: number) => {
+            data.reduce((acc: Record<number, "correct" | "fail" | "pending">, _q: Omit<QuestionType, "index">, i: number) => {
               acc[i] = "pending";
               return acc;
             }, {})
@@ -72,7 +65,7 @@ export default function QuizApp() {
 
   // Reset quiz state
   function resetQuiz() {
-    const newStatus = questions.reduce((acc: Record<number, "correct" | "fail" | "pending">, _q, i) => {
+    const newStatus = questions.reduce((acc: Record<number, "correct" | "fail" | "pending">, _q: QuestionType, i: number) => {
       acc[i] = "pending";
       return acc;
     }, {});
