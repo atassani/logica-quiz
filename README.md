@@ -34,8 +34,8 @@ Asegúrate de que tu archivo `next.config.js` contiene:
 ```js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-	output: 'export',
-	// ...otras opciones de configuración
+    output: 'export',
+    // ...otras opciones de configuración
 };
 module.exports = nextConfig;
 ```
@@ -48,7 +48,7 @@ npm run build
 
 Esto generará un directorio `out/` con todos los archivos estáticos que puedes subir al bucket S3. Excluye los siguientes archivos y directorios:
 
-```
+```bash
 node_modules/
 src/
 data/

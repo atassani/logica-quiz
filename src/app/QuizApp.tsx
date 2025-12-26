@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 interface QuestionType {
   index: number;
@@ -26,22 +26,27 @@ function groupBySection(questions: QuestionType[]): Map<string, QuestionType[]> 
 }
 
 export default function QuizApp() {
+  const canResumeRef = useRef(false);
   const [questions, setQuestions] = useState<QuestionType[]>([]);
   const [status, setStatus] = useState<Record<number, "correct" | "fail" | "pending">>({});
   const [current, setCurrent] = useState<number | null>(null);
-  const [showStatus, setShowStatus] = useState<boolean>(true);
+  const [showStatus, setShowStatus] = useState<boolean>(false);
   const [showResult, setShowResult] = useState<null | { correct: boolean; explanation: string }>(null);
+  const resumeQuestionRef = useRef<number | null>(null);
 
   // Load questions and status from localStorage
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/questions.json`)
       .then((r) => r.json())
       .then((data) => {
-        setQuestions(data.map((q: Omit<QuestionType, "index">, i: number) => ({ ...q, index: i })));
+        const questionsWithIndex = data.map((q: Omit<QuestionType, "index">, i: number) => ({ ...q, index: i }));
+        setQuestions(questionsWithIndex);
         // Try to load status from localStorage
         const savedStatus = localStorage.getItem("quizStatus");
         if (savedStatus) {
           setStatus(JSON.parse(savedStatus));
+          // If there is a saved status, show grid as before
+          setShowStatus(true);
         } else {
           setStatus(
             data.reduce((acc: Record<number, "correct" | "fail" | "pending">, _q: Omit<QuestionType, "index">, i: number) => {
@@ -49,6 +54,12 @@ export default function QuizApp() {
               return acc;
             }, {})
           );
+          // No saved status: show first question
+          if (questionsWithIndex.length > 0) {
+            const first = Math.floor(Math.random() * questionsWithIndex.length);
+            setCurrent(first);
+            setShowStatus(false);
+          }
         }
       });
   }, []);
@@ -59,6 +70,8 @@ export default function QuizApp() {
       localStorage.setItem("quizStatus", JSON.stringify(status));
     }
   }, [status, questions.length]);
+
+  // Define all functions used in the component
   function pendingQuestions() {
     return questions.filter((q) => status[q.index] === "pending");
   }
@@ -115,22 +128,60 @@ export default function QuizApp() {
   }
 
   function handleContinue(action: string) {
+    // If we're in the result view and user clicks Continuar, go to a random pending question
+    if (action === "C" && showResult) {
+      resumeQuestionRef.current = null;
+      canResumeRef.current = false;
+      nextQuestion();
+      return;
+    }
+
     if (action === "E") {
+      // Only set resume if we're currently on a question view (not result)
+      if (!showResult && current !== null) {
+        resumeQuestionRef.current = current;
+        canResumeRef.current = true;
+      } else {
+        resumeQuestionRef.current = null;
+        canResumeRef.current = false;
+      }
       setShowStatus(true);
       setShowResult(null);
-      setCurrent(null);
     } else {
-      nextQuestion();
+      // Coming back from status grid: resume if allowed, otherwise random pending
+      if (resumeQuestionRef.current !== null && canResumeRef.current) {
+        setShowStatus(false);
+        setCurrent(resumeQuestionRef.current);
+        resumeQuestionRef.current = null;
+        canResumeRef.current = false;
+      } else {
+        resumeQuestionRef.current = null;
+        canResumeRef.current = false;
+        nextQuestion();
+      }
     }
+  }
+
+  // Helper to go to status and enable resume (only from question view)
+  function goToStatusWithResume() {
+    if (current !== null) {
+      resumeQuestionRef.current = current;
+      canResumeRef.current = true;
+    }
+    setShowStatus(true);
+    setShowResult(null);
   }
 
   // Status grid rendering
   function renderStatusGrid() {
     const grouped = groupBySection(questions);
+    const correctCount = Object.values(status).filter((s) => s === "correct").length;
+    const failCount = Object.values(status).filter((s) => s === "fail").length;
+    const pendingCount = questions.length - (correctCount + failCount);
     return (
       <div className="space-y-8">
         <div className="mt-2 text-sm">
-          {EMOJI_PROGRESS} Total: {questions.length} | Correctas: {Object.values(status).filter((s) => s === "correct").length} | Falladas: {Object.values(status).filter((s) => s === "fail").length} | Pendientes: {Object.values(status).filter((s) => s !== "correct").length}
+          {EMOJI_PROGRESS} Total: {questions.length} | Correctas: {correctCount} | Falladas: {failCount} | Pendientes: {pendingCount}
         </div>        
         {[...grouped.entries()].map(([section, qs]) => (
           <div key={section}>
@@ -155,7 +206,7 @@ export default function QuizApp() {
           <span>{EMOJI_ASK} = Pendiente</span>
         </div>
         <div className="flex gap-4 mt-6">
-          <button className="px-4 py-2 bg-blue-600 text-white rounded" onClick={nextQuestion} disabled={pendingQuestions().length === 0}>
+          <button className="px-4 py-2 bg-blue-600 text-white rounded" onClick={() => handleContinue("C")} disabled={pendingQuestions().length === 0}>
             {pendingQuestions().length === 0 ? EMOJI_DONE + " ¡Completado!" : "Continuar"}
           </button>
           <button className="px-4 py-2 bg-orange-500 text-white rounded" onClick={resetQuiz}>
@@ -170,13 +221,20 @@ export default function QuizApp() {
   function renderQuestion() {
     if (current == null) return null;
     const q = questions[current];
+    const correctCount = Object.values(status).filter((s) => s === "correct").length;
+    const failCount = Object.values(status).filter((s) => s === "fail").length;
+    const pendingCount = questions.length - (correctCount + failCount);
     return (
       <div className="space-y-6">
+        <div className="mt-2 text-sm">
+          {EMOJI_PROGRESS} Total: {questions.length} | Correctas: {correctCount} | Falladas: {failCount} | Pendientes: {pendingCount}
+        </div>
         <div className="font-bold text-lg">{EMOJI_SECTION} {q.section}</div>
         <div className="text-xl font-semibold">{q.number}. {q.question}</div>
         <div className="flex gap-4 mt-4">
           <button className="px-6 py-2 bg-green-600 text-white rounded text-lg" onClick={() => handleAnswer("V")}>V</button>
           <button className="px-6 py-2 bg-red-600 text-white rounded text-lg" onClick={() => handleAnswer("F")}>F</button>
+          <button className="px-6 py-2 bg-gray-400 text-white rounded text-lg" onClick={goToStatusWithResume}>Ver estado</button>
         </div>
       </div>
     );
@@ -188,12 +246,15 @@ export default function QuizApp() {
     const allAnswered = questions.length > 0 && Object.values(status).filter(s => s === "pending").length === 0;
     if (allAnswered) {
       const grouped = groupBySection(questions);
+      const correctCount = Object.values(status).filter((s) => s === "correct").length;
+      const failCount = Object.values(status).filter((s) => s === "fail").length;
+      const pendingCount = questions.length - (correctCount + failCount);
       return (
         <div className="space-y-8 mt-8">
           <div className="text-2xl font-bold">{EMOJI_DONE} ¡Quiz completado!</div>
           <div className="mt-2 text-sm">
-            {EMOJI_PROGRESS} Total: {questions.length} | Correctas: {Object.values(status).filter((s) => s === "correct").length} | Falladas: {Object.values(status).filter((s) => s === "fail").length} | Pendientes: {Object.values(status).filter((s) => s !== "correct").length}
-          </div>        
+            {EMOJI_PROGRESS} Total: {questions.length} | Correctas: {correctCount} | Falladas: {failCount} | Pendientes: {pendingCount}
+          </div>
           {[...grouped.entries()].map(([section, qs]) => (
             <div key={section}>
               <div className="font-bold text-lg mb-2">{EMOJI_SECTION} {section}</div>
@@ -221,8 +282,21 @@ export default function QuizApp() {
       );
     }
     if (!showResult) return null;
+    const correctCount = Object.values(status).filter((s) => s === "correct").length;
+    const failCount = Object.values(status).filter((s) => s === "fail").length;
+    const pendingCount = questions.length - (correctCount + failCount);
+    const q = current !== null ? questions[current] : null;
     return (
       <div className="space-y-4 mt-8">
+        <div className="mt-2 text-sm">
+          {EMOJI_PROGRESS} Total: {questions.length} | Correctas: {correctCount} | Falladas: {failCount} | Pendientes: {pendingCount}
+        </div>
+        {q && (
+          <>
+            <div className="font-bold text-lg">{EMOJI_SECTION} {q.section}</div>
+            <div className="text-xl font-semibold">{q.number}. {q.question}</div>
+          </>
+        )}
         <div className="text-2xl">
           {showResult.correct ? EMOJI_SUCCESS + " ¡Correcto!" : EMOJI_FAIL + " Incorrecto."}
         </div>
@@ -243,9 +317,11 @@ export default function QuizApp() {
       <div className="w-full max-w-3xl bg-white dark:bg-zinc-900 rounded-lg shadow-lg p-8">
         {showResult
           ? renderResult()
-          : (allAnswered
-              ? renderResult()
-              : (showStatus ? renderStatusGrid() : renderQuestion()))}
+          : allAnswered
+          ? renderResult()
+          : showStatus
+          ? renderStatusGrid()
+          : renderQuestion()}
       </div>
     </div>
   );
