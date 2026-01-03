@@ -1,6 +1,9 @@
+
 "use client";
 import { useEffect, useState, useRef } from "react";
 import DOMPurify from "isomorphic-dompurify";
+import Link from "next/link";
+import packageJson from '../../package.json';
 
 interface QuestionType {
   index: number;
@@ -204,6 +207,8 @@ export default function QuizApp() {
       </div>
     );
   }
+
+
 
   // Section selection UI
   function renderSectionSelection() {
@@ -550,7 +555,7 @@ export default function QuizApp() {
   const allAnswered = questions.length > 0 && Object.values(status).filter(s => s === "pending").length === 0;
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-zinc-50 dark:bg-black p-4">
-      <div className="w-full max-w-3xl bg-white dark:bg-zinc-900 rounded-lg shadow-lg p-8">
+      <div className="w-full max-w-3xl bg-white dark:bg-zinc-900 rounded-lg shadow-lg p-8 relative">
         {showSelectionMenu
           ? (selectionMode === "sections"
               ? renderSectionSelection()
@@ -564,7 +569,23 @@ export default function QuizApp() {
                   : showStatus
                     ? renderStatusGrid()
                     : renderQuestion()))}
+        {/* Version link inside the main frame, bottom left */}
+        <VersionLink />
       </div>
     </div>
+  );
+}
+
+// Version link component for bottom left of main frame
+function VersionLink() {
+  return (
+    <Link
+      href="/version-history"
+      className="absolute left-4 bottom-4 text-xs text-gray-500 hover:underline z-20"
+      style={{ fontSize: "0.75rem" }}
+      aria-label="Historial de versiones"
+    >
+      v{packageJson.version}
+    </Link>
   );
 }

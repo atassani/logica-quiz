@@ -6,7 +6,7 @@ En el examen de la asignatura Lógica I de Filosofía de la UNED hay una parte d
 
 Se trata de una aplicación "vibe coded" usando [Next.js](https://nextjs.org) con  [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-Los resultados se almacenan en el `LocalStorage` del nagador y se recuperan al iniciar la aplicación.
+Los resultados se almacenan en el `LocalStorage` del navegador y se recuperan al iniciar la aplicación.
 
 Para arrancarla:
 
