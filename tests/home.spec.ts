@@ -194,3 +194,41 @@ test('selects one section and starts quiz in Lógica I area', async ({ page }) =
   await page.getByRole('button', { name: 'V', exact: true }).click();
   await page.getByRole('button', { name: 'Continuar' }).click();
 });
+
+test('MCQ shows expected answer in correct format when wrong answer is selected', async ({ page }) => {
+  await page.goto(homePath);
+  
+  // Navigate to IPC area with MCQ questions
+  await page.getByRole('button', { name: /Introducción al Pensamiento Científico/ }).click();
+  await page.getByRole('button', { name: 'Todas las preguntas' }).click();
+  
+  // Wait for first question to load - use exact match for A button
+  await expect(page.getByRole('button', { name: 'A', exact: true })).toBeVisible();
+  
+  // Click on answer A
+  await page.getByRole('button', { name: 'A', exact: true }).click();
+  
+  // Check if it shows "Incorrecto" - if so, verify expected answer format
+  const isIncorrect = await page.getByText('❌ Incorrecto.').isVisible();
+  
+  if (isIncorrect) {
+    // Should show "Respuesta esperada X) ..." format in the answer section
+    const answerSection = page.locator('.text-red-600');
+    await expect(answerSection).toBeVisible();
+    
+    // The answer should start with "Respuesta esperada" followed by the letter and option text
+    await expect(answerSection).toContainText(/^Respuesta esperada [ABC]\) /);
+  } else {
+    // If A was correct, try B
+    await page.getByRole('button', { name: 'Continuar' }).click();
+    await page.getByRole('button', { name: 'B', exact: true }).click();
+    
+    const isIncorrectB = await page.getByText('❌ Incorrecto.').isVisible();
+    
+    if (isIncorrectB) {
+      const answerSection = page.locator('.text-red-600');
+      await expect(answerSection).toBeVisible();
+      await expect(answerSection).toContainText(/^Respuesta esperada [ABC]\) /);
+    }
+  }
+});

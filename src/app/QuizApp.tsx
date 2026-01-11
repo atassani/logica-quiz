@@ -685,7 +685,14 @@ export default function QuizApp() {
           </div>
           <div
             className={`text-base font-semibold mt-2 rich-content ${showResult.correct ? "text-green-600" : "text-red-600"}`}
-            dangerouslySetInnerHTML={formatRichText(current !== null ? questions[current]?.answer : "")}
+            dangerouslySetInnerHTML={formatRichText(
+              current !== null && questions[current] 
+                ? (currentQuizType === "Multiple Choice" 
+                    ? `Respuesta esperada: ${questions[current].answer.toUpperCase()}) ${questions[current].options?.[questions[current].answer.toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0)] || questions[current].answer}`
+                    : questions[current].answer
+                  )
+                : ""
+            )}
           ></div>
           <div className="text-base rich-content" dangerouslySetInnerHTML={formatRichText(showResult.explanation)}></div>
           <div className="flex gap-4 mt-4">
