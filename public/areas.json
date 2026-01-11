@@ -1,0 +1,12 @@
+[
+  {
+    "area": "Lógica I",
+    "file": "questions_logica1.json",
+    "type": "True False"
+  },
+  {
+    "area": "Introducción al Pensamiento Científico",
+    "file": "questions_ipc.json", 
+    "type": "Multiple Choice"
+  }
+]
