@@ -2,6 +2,7 @@ import Link from "next/link";
 
 const VERSION_HISTORY = [
   // This will be replaced with real git log output
+  { version: "1.4.0", date: "2026-01-16", description: "Si una pregunta ha aparecido en secciones o exámenes anteriores, en la respuesta aparece como una lista." },
   { version: "1.3.2", date: "2026-01-15", description: "Mejoras en la robustez del reinicio de localStorage en iOS Safari." },
   { version: "1.3.1", date: "2026-01-14", description: "Añadido contenido de Filosofía del Lenguaje." },
   { version: "1.3.0", date: "2026-01-12", description: "Permite preguntas en múltiples áreas, y tipo de test de múltiple opción, además del verdadero-falso. Añadido tests de Introducción a Pensamiento Científico." },
