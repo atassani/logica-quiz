@@ -1,6 +1,6 @@
 
 import { test, expect } from '@playwright/test';
-import { setupFreshTest, waitForAppReady } from './tests/helpers';
+import { setupFreshTest, waitForAppReady } from './helpers';
 
 test.describe('Question Order Bugs', () => {
   test.beforeEach(async ({ page }) => {
