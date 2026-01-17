@@ -63,7 +63,7 @@ Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issu
 
 ## Done
 
-### FEAT-001 — Keyboard shortcuts for multiple-choice (1/2/3…)
+### ✅ FEAT-001 — Keyboard shortcuts for multiple-choice (1/2/3…)
 - **Status:** done
 - **Priority:** P3
 - **Reported:** 2025-01-16
@@ -71,9 +71,10 @@ Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issu
 - **Commits:**
   - RED: Playwright E2E test (mcq-numeric-shortcuts.spec.ts)
   - GREEN: QuizApp.tsx implementation
-- **PR:** (add link when merged)
+- **PR:** [https://github.com/atassani/uned-studio/pull/8](https://github.com/atassani/uned-studio/pull/8)
 - **Reporter:** TT
 - **Notes:** Numeric keys now select MCQ answers (1 = A, 2 = B, etc.) in addition to A/B/C. Improves accessibility and speed for keyboard users.
+  - Tried to use Enter and Space to confirm answers, but they are used by default when a button is selected, so it conflicted.
 
 ### ✅ BUG-000 — Sequential order skipped first question in section
 - **Status:** done
