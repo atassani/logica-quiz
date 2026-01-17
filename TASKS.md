@@ -12,16 +12,16 @@ Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issu
 
 ## Now
 
+### FEAT-002 — Support variable number of answers in multiple choice (2..5)
+- **Status:** backlog
+- **Priority:** P2
+- **Reported:** 2025-01-16
+- **Reporter:** TT
+- **Notes:** Show A..E depending on options; don’t assume exactly 3.
+
 ---
 
 ## Backlog
-
-### BUG-001 — Trailing slash required for /uned/studio route
-- **Status:** backlog
-- **Priority:** P1
-- **Reported:** 2025-01-16
-- **Reporter:** TT
-- **Notes:** `/uned/studio` fails without trailing slash, but `/uned/studio/` works. Might be AWS/S3/CloudFront routing or Vercel rewrites.
 
 ### FEAT-003 — Shuffle multiple-choice answer order (optional)
 - **Status:** backlog
@@ -29,13 +29,6 @@ Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issu
 - **Reported:** 2025-01-16
 - **Reporter:** TT
 - **Notes:** Randomize options each time; adjust correct answer accordingly; add setting to enable/disable.
-
-### FEAT-002 — Support variable number of answers in multiple choice (2..N)
-- **Status:** backlog
-- **Priority:** P2
-- **Reported:** 2025-01-16
-- **Reporter:** TT
-- **Notes:** Show A..N depending on options; don’t assume exactly 3.
 
 ### TECH-002 — Consolidate localStorage keys under a single root key
 - **Status:** backlog
@@ -50,6 +43,13 @@ Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issu
 - **Reported:** 2025-01-17
 - **Reporter:** TT
 - **Notes:** Find a solution to separate app code from question data (e.g., JSON files). This would allow updating questions without redeploying the app.
+
+### BUG-001 — Trailing slash required for /uned/studio route
+- **Status:** backlog
+- **Priority:** P1
+- **Reported:** 2025-01-16
+- **Reporter:** TT
+- **Notes:** `/uned/studio` fails without trailing slash, but `/uned/studio/` works. Might be AWS/S3/CloudFront routing or Vercel rewrites.
 
 ---
 
