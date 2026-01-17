@@ -1,27 +1,75 @@
-# Bug: Sequential Order Skips First Question in Section
+# Conventional Commits & Release Management
+
+We follow [Conventional Commits](https://www.conventionalcommits.org/) for all commit messages. This means:
+- Prefix each commit with a type (feat, fix, docs, style, refactor, test, chore, etc.) and a short description.
+- Example: `fix: always start at first question in section`
+- For documentation or process changes, use `docs:` (e.g. `docs: update agent plan for versioning and changelog`)
+- For version bumps, start the commit message with the new version (e.g. `v1.4.0: ...`).
+
+## CHANGELOG.md Usage
+
+- We maintain a `CHANGELOG.md` at the root of the project.
+- The version number is tracked in `package.json`.
+- For every merge request (pull request) that is not a release, add an entry under an "Unreleased" section in `CHANGELOG.md` describing the change (feature, fix, etc.).
+- When a release is made, move all "Unreleased" entries under the new version heading, add the release date, and update `package.json`.
+- Example structure:
+	```markdown
+	## [Unreleased]
+	- feat: add keyboard shortcuts for MCQ answers
+	- fix: sequential order always starts at first question
+
+	## [1.4.0] - 2026-01-17
+	- ...
+	```
+
+## Identifying Releases in GitLab
+
+- In GitLab, releases are typically identified by git tags (e.g. `v1.4.0`).
+- To revert to the code of a release, checkout the tag: `git checkout v1.4.0`
+- You can also view releases in the GitLab UI under the "Releases" or "Tags" section.
+
+## Independent Evolution of Code and Data
+
+- Feature to implement: Separate questions (data) from application code so that their evolution is independent.
+- Store questions in a dedicated folder or repository, and reference them from the app.
+- This allows updating questions without changing application code, and vice versa.
+
+## Task Management
+
+- Tasks (features, bugs, technical improvements) are managed in the `AGENT_PLAN.md` file under "Features To Implement".
+- Each item should have a clear description, type (feature, bug, technical), and expected version bump (PATCH, MINOR, MAJOR).
+- Update the list as tasks are started, completed, or reprioritized.
+- For more complex projects, consider using GitLab Issues or GitHub Issues for tracking, but `AGENT_PLAN.md` is the source of truth for this project.
+# ✅ Bug: Sequential Order Skips First Question in Section (RESOLVED)
 
 ## Summary
 When starting a quiz section in sequential order, the first question of the section is sometimes not shown first. Instead, the quiz may start at a later question, but subsequent questions are presented in order.
 
-## Symptoms
-- User selects a section and starts the quiz in sequential order.
-- The first question in the section is not shown; the quiz starts at a later question.
-- All following questions are shown in the correct order.
+## ✅ Resolution
+**Fixed in commit 147473e**: Always start at first question when starting sections or question selection
 
-## Suspected Cause
-- The application restores the previous current question index from localStorage (`currentQuestion_${areaKey}`) when starting a new section or quiz mode.
-- If the saved index is not 0, the quiz may start at a later question, even if the question set has changed.
-- This can happen if the user previously started a quiz in that area/section and did not reset or clear progress.
+### What was fixed:
+- Removed logic that restores saved currentQuestion index in `startQuizSections` and `startQuizQuestions` functions
+- Always set current to 0 when starting a new section or question selection
+- This ensures sequential order always starts with the first question regardless of previous progress
+
+### Root Cause:
+The application was restoring the previous current question index from localStorage (`currentQuestion_${areaKey}`) when starting a new section or quiz mode. If the saved index was not 0, the quiz would start at a later question, even if the question set had changed.
+
+### Test Coverage:
+- Added failing test that reproduced the bug by manually setting localStorage
+- Test confirmed bug: expected question 1 but received question 2
+- After fix, test passes and existing question order tests still pass
 
 ## Implementation Notes
 - Ensure that when starting a new section or quiz mode, the current question index is always reset to 0 (the first question in the filtered/sorted list).
 - Consider clearing or resetting `currentQuestion_${areaKey}` when the user starts a new section or changes the question set.
 - Add or update tests to verify that the first question is always shown first in sequential order, regardless of previous progress.
 
-## Next Steps
-- Reproduce the bug with a failing test.
-- Implement a fix to always reset the current question index when starting a new section or quiz mode.
-- Verify with tests and user feedback.
+## ~~Next Steps~~
+- ✅ Reproduce the bug with a failing test.
+- ✅ Implement a fix to always reset the current question index when starting a new section or quiz mode.
+- ✅ Verify with tests and user feedback.
 
 # Agent Development Plan
 
