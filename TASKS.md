@@ -12,14 +12,6 @@ Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issu
 
 ## Now
 
-### BUG-002 — Duplicated / missing questions in IPC exam sections
-- **Status:** backlog
-- **Priority:** P1
-- **Reported:** 2025-01-16
-- **Reporter:** Esteve
-- **Area:** IPC contents
-- **Notes:** In 2024 exam section there seem to be 20 questions (expected 10). In 2025 Feb model 2 there are 9 (expected 10).
-
 ---
 
 ## Backlog
@@ -62,6 +54,16 @@ Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issu
 ---
 
 ## Done
+
+### ✅ BUG-002 — Duplicated / missing questions in IPC exam sections
+- **Status:** backlog
+- **Priority:** P1
+- **Reported:** 2025-01-16
+- **Completed:** 2026-01-17
+- **Reporter:** Esteve
+- **Area:** IPC contents
+- **Notes:** In 2024 exam section there seem to be 20 questions (expected 10). In 2025 Feb model 2 there are 9 (expected 10).
+
 
 ### ✅ FEAT-001 — Keyboard shortcuts for multiple-choice (1/2/3…)
 - **Status:** done

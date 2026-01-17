@@ -1259,6 +1259,18 @@
       "Tema 11. La ciencia como producto social"
     ]
   },
+    {
+    "section": "Examen 2025 Febrero 2",
+    "number": 10,
+    "question": "¿Cómo se llaman las investigaciones que buscan reproducir resultados obtenidos en un experimento previo?",
+    "options": [
+      "Ensayos clinicos aleatorizados",
+      "Estudios de replicación",
+      "Experimentos cruciales"
+    ],
+    "answer": "Estudios de replicación",
+    "explanation": "Las investigaciones que buscan reproducir resultados obtenidos en un experimento previo se llaman estudios de replicación."
+  },
   {
     "section": "Examen 2024 Septiembre",
     "number": 1,
@@ -1391,149 +1403,6 @@
     "section": "Examen 2024 Septiembre",
     "number": 10,
     "question": "¿Cuando los discursos no-científicos se enfrentan al discurso científico?",
-    "options": [
-      "Cuando los asumen los científicos.",
-      "Cuando son aceptados por un gran número de personas.",
-      "Cuando son pseudocientíficos o anticientíficos."
-    ],
-    "answer": "Cuando son pseudocientíficos o anticientíficos.",
-    "explanation": "Se enfrentan cuando son pseudocientíficos o anticientíficos: pretenden sustituir o erosionar el discurso científico.",
-    "appearsIn": [
-      "Tema 10. La ciencia y sus enemigos: ciencia vs. no ciencia, pseudociencia y anticiencia"
-    ]
-  },
-  {
-    "section": "Examen 2024 Septiembre",
-    "number": 1,
-    "question": "¿Qué es la evidencia?",
-    "options": [
-      "Una creencia trivial o irrelevante.",
-      "Una verdad obvia.",
-      "Pruebas o indicios acerca de la verdad de una proposición."
-    ],
-    "answer": "Pruebas o indicios acerca de la verdad de una proposición.",
-    "explanation": "Evidencia son pruebas/indicios que apoyan (en distinto grado) la verdad de una proposición o hipótesis.",
-    "appearsIn": [
-      "Examen 2023 Febrero 1",
-      "Examen 2022 Febrero 1"
-    ]
-  },
-  {
-    "section": "Examen 2024 Septiembre",
-    "number": 2,
-    "question": "¿Cuál es la relación entre las creencias tradicionales y la evidencia científica?",
-    "options": [
-      "Las creencias tradicionales siempre son compatibles con la evidencia científica.",
-      "Las creencias tradicionales constituyen evidencia científica fiable.",
-      "Las creencias tradicionales que no estén respaldadas por la evidencia no serán aceptables científicamente."
-    ],
-    "answer": "Las creencias tradicionales que no estén respaldadas por la evidencia no serán aceptables científicamente.",
-    "explanation": "Si no están respaldadas por evidencia, las creencias tradicionales no serán aceptables como conocimiento científico."
-  },
-  {
-    "section": "Examen 2024 Septiembre",
-    "number": 3,
-    "question": "Según el escepticismo humeano sobre la inducción:",
-    "options": [
-      "No existe justificación racional para realizar razonamientos inductivos: nuestra tendencia a aceptar generalizaciones a partir de la observación de casos particulares es un mero hábito psicológico, una inclinación mental fruto de la costumbre.",
-      "Solo estamos justificados a realizar razonamientos inductivos si partimos de observaciones hechas en condiciones ideales.",
-      "Nunca podremos estar seguros de si las premisas de un razonamiento inductivo son verdaderas."
-    ],
-    "answer": "No existe justificación racional para realizar razonamientos inductivos: nuestra tendencia a aceptar generalizaciones a partir de la observación de casos particulares es un mero hábito psicológico, una inclinación mental fruto de la costumbre.",
-    "explanation": "Hume sostiene que no hay justificación racional no circular para la inducción; nuestra confianza en generalizaciones es hábito o costumbre.",
-    "appearsIn": [
-      "Examen 2025 Febrero 2"
-    ]
-  },
-  {
-    "section": "Examen 2024 Septiembre",
-    "number": 4,
-    "question": "Cuando dos variables están perfectamente correlacionadas:",
-    "options": [
-      "Existe necesariamente una relación causal entre ellas, ya que de otro modo no sería un resultado estadísticamente significativo.",
-      "No siempre puede concluirse que exista una relación causal entre ellas.",
-      "El resultado es nulo, ya que no resulta estadísticamente significativo."
-    ],
-    "answer": "No siempre puede concluirse que exista una relación causal entre ellas.",
-    "explanation": "Correlación no implica causalidad: puede haber variables de confusión o relaciones no causales que expliquen la correlación.",
-    "appearsIn": [
-      "Examen 2023 Febrero 2"
-    ]
-  },
-  {
-    "section": "Examen 2024 Septiembre",
-    "number": 5,
-    "question": "¿Qué es un argumento?",
-    "options": [
-      "Un argumento es una proposición que se usa como premisa en un razonamiento.",
-      "Un argumento es una secuencia de proposiciones, constituida por un conjunto de premisas de las que se siguen ciertas conclusiones.",
-      "Un argumento es una proposición verdadera."
-    ],
-    "answer": "Un argumento es una secuencia de proposiciones, constituida por un conjunto de premisas de las que se siguen ciertas conclusiones.",
-    "explanation": "Un argumento es un conjunto de premisas que pretenden apoyar una conclusión; no es una sola proposición aislada."
-  },
-  {
-    "section": "Examen 2024 Septiembre",
-    "number": 6,
-    "question": "Los modelos científicos son...",
-    "options": [
-      "Representaciones perfectas de los fenómenos estudiados.",
-      "Idealizaciones que sirven para aproximarse a las realidades abordadas.",
-      "Guías de actuación para los científicos."
-    ],
-    "answer": "Idealizaciones que sirven para aproximarse a las realidades abordadas.",
-    "explanation": "Los modelos suelen idealizar y simplificar para aproximarse a fenómenos complejos y permitir inferencias útiles.",
-    "appearsIn": [
-      "Tema 7. El uso de los modelos en ciencia"
-    ]
-  },
-  {
-    "section": "Examen 2024 Septiembre",
-    "number": 7,
-    "question": "Según el giro social de la filosofía de la ciencia...",
-    "options": [
-      "El criterio de demarcación será algo que dependa de los valores y de los aspectos contextuales que determinan el paradigma científico dominante.",
-      "No existe realmente ningún enunciado ni ninguna teoría que pueda ser considerada como científica, pues todo está determinado socialmente.",
-      "Decidir si algo es científico o no es una cuestión personal, pues dependerá de los criterios individuales e inconmensurables de cada uno de los científicos particulares."
-    ],
-    "answer": "El criterio de demarcación será algo que dependa de los valores y de los aspectos contextuales que determinan el paradigma científico dominante.",
-    "explanation": "El giro social subraya que lo que cuenta como ciencia depende también de valores y contextos que configuran paradigmas y estándares."
-  },
-  {
-    "section": "Examen 2024 Septiembre",
-    "number": 8,
-    "question": "Los modelos científicos son…",
-    "options": [
-      "Representaciones perfectas de los fenómenos estudiados",
-      "Idealizaciones que sirven para aproximarse a las realidades abordadas",
-      "Guias de actuacion para los científicos"
-    ],
-    "answer": "Idealizaciones que sirven para aproximarse a las realidades abordadas",
-    "explanation": "Los modelos suelen idealizar y simplificar para aproximarse a fenómenos complejos y permitir inferencias útiles.",
-    "appearsIn": [
-      "Tema 7. El uso de los modelos en ciencia"
-    ]
-  },
-  {
-    "section": "Examen 2024 Septiembre",
-    "number": 9,
-    "question": "Las motivaciones de los científicos:",
-    "options": [
-      "Son exclusivamente epistémicas (en concreto la búsqueda de conocimiento objetivo), ya que la ciencia aspira a la verdad.",
-      "Incluyen motivaciones prácticas, como la búsqueda de reconocimiento y la obtención de premios y financiación.",
-      "Cuando un científico está motivado por intereses prácticos, los resultados de su investigacidn son fraudulentos."
-    ],
-    "answer": "Incluyen motivaciones prácticas, como la búsqueda de reconocimiento y la obtención de premios y financiación.",
-    "explanation": "Además de motivos epistémicos, hay incentivos prácticos (carrera, financiación, reconocimiento) que influyen en la actividad científica.",
-    "appearsIn": [
-      "Tema 12. ¿Cómo funcionan las instituciones científicas?",
-      "Examen 2025 Febrero 1"
-    ]
-  },
-  {
-    "section": "Examen 2024 Septiembre",
-    "number": 10,
-    "question": "¿Cuándo los discursos no-científicos se enfrentan al discurso científico?",
     "options": [
       "Cuando los asumen los científicos.",
       "Cuando son aceptados por un gran número de personas.",
