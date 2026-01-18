@@ -30,7 +30,7 @@ export default defineConfig({
     url: baseUrl.replace(/\/$/, ''),
     reuseExistingServer: true,
     timeout: 120000,
-   },
+  },
   projects: [
     {
       name: 'chromium',

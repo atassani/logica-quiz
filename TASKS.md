@@ -3,6 +3,7 @@
 Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issues).
 
 ## How we use this file
+
 - New ideas/bugs go into **Backlog** (with date + reporter).
 - When we commit to doing something, move it to **Now** and set a priority.
 - When finished, move it to **Done** (don’t delete it). Add PR/commit link or hash + completion date.
@@ -10,10 +11,10 @@ Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issu
 
 ---
 
-
 ## Now
 
 ### FEAT-003 — Shuffle multiple-choice answer order (optional)
+
 - **Status:** in-progress
 - **Priority:** P3
 - **Reported:** 2025-01-16
@@ -24,8 +25,8 @@ Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issu
 
 ## Backlog
 
-
 ### TECH-002 — Consolidate localStorage keys under a single root key
+
 - **Status:** backlog
 - **Priority:** P3
 - **Reported:** 2025-01-16
@@ -33,6 +34,7 @@ Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issu
 - **Notes:** Today we store `currentArea`, `quizStatus_*`, `questionOrder_*`, `currentQuestion_*`. Consider one `unedTestsData` object.
 
 ### TECH-003 — Separate application from data
+
 - **Status:** backlog
 - **Priority:** P3
 - **Reported:** 2025-01-17
@@ -40,6 +42,7 @@ Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issu
 - **Notes:** Find a solution to separate app code from question data (e.g., JSON files). This would allow updating questions without redeploying the app.
 
 ### BUG-001 — Trailing slash required for /uned/studio route
+
 - **Status:** backlog
 - **Priority:** P1
 - **Reported:** 2025-01-16
@@ -51,6 +54,7 @@ Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issu
 ## Done
 
 ### ✅ FEAT-002 — Support variable number of answers in multiple choice (2..5)
+
 - **Status:** done
 - **Priority:** P2
 - **Reported:** 2025-01-16
@@ -62,6 +66,7 @@ Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issu
 - **Notes:** Added support for MCQ questions with 2-5 answer options (not just 3). Created test data infrastructure to keep test-only data separate from production. Added environment variable support for custom areas.json file.
 
 ### ✅ BUG-002 — Duplicated / missing questions in IPC exam sections
+
 - **Status:** backlog
 - **Priority:** P1
 - **Reported:** 2025-01-16
@@ -70,8 +75,8 @@ Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issu
 - **Area:** IPC contents
 - **Notes:** In 2024 exam section there seem to be 20 questions (expected 10). In 2025 Feb model 2 there are 9 (expected 10).
 
-
 ### ✅ FEAT-001 — Keyboard shortcuts for multiple-choice (1/2/3…)
+
 - **Status:** done
 - **Priority:** P3
 - **Reported:** 2025-01-16
@@ -85,6 +90,7 @@ Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issu
   - Tried to use Enter and Space to confirm answers, but they are used by default when a button is selected, so it conflicted.
 
 ### ✅ BUG-000 — Sequential order skipped first question in section
+
 - **Status:** done
 - **Reported:** 2025-01-16
 - **Reporter:** TT
@@ -98,11 +104,13 @@ Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issu
 ## Notes for contributors
 
 ### Priority meanings
+
 - **P1:** user-facing breakage / wrong data / blocks usage
 - **P2:** important improvement, but workaround exists
 - **P3:** nice-to-have / small UX / cleanup
 
 ### VS Code tips (to keep it “list-like”)
+
 - Use the built-in folding:
   - **Fold all:** Cmd+K, Cmd+0 (Mac) / Ctrl+K, Ctrl+0 (Win/Linux)
   - **Unfold all:** Cmd+K, Cmd+J / Ctrl+K, Ctrl+J
@@ -116,5 +124,6 @@ Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issu
   - **markdownlint** (keeps structure consistent)
 
 ### Rule of thumb for AI agents editing this file
+
 - Don’t delete items when completed: move them to **Done**, add completion date + PR/commit.
 - If you discover sub-tasks while implementing, add them under the same item as bullet notes (don’t explode the list).

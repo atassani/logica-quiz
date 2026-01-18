@@ -10,7 +10,7 @@ test.describe('MCQ shuffle option', () => {
     await page.getByRole('button', { name: 'Orden secuencial' }).click();
     // Enable shuffle BEFORE starting quiz - click on "Secuencial" label instead of using .check()
     await page.getByRole('button', { name: 'Respuestas secuenciales' }).click();
-    
+
     // Run quiz multiple times to see if order changes
     const ordersSeen = new Set<string>();
     for (let i = 0; i < 5; i++) {
@@ -18,12 +18,12 @@ test.describe('MCQ shuffle option', () => {
       await waitForQuizReady(page);
       const options = await page.locator('.question-text ~ div > div').allTextContents();
       ordersSeen.add(options.join(','));
-      
+
       // Go back to menu
       await page.getByRole('button', { name: 'Options' }).click();
       await page.getByRole('button', { name: 'Volver a empezar' }).first().click();
     }
-    
+
     // With shuffle enabled, we should see at least 2 different orders in 5 runs
     expect(ordersSeen.size).toBeGreaterThanOrEqual(2);
   });

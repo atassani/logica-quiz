@@ -1,7 +1,7 @@
-"use client";
-import { useEffect, useState, useRef, useCallback } from "react";
-import DOMPurify from "isomorphic-dompurify";
-import Link from "next/link";
+'use client';
+import { useEffect, useState, useRef, useCallback } from 'react';
+import DOMPurify from 'isomorphic-dompurify';
+import Link from 'next/link';
 import packageJson from '../../package.json';
 
 interface QuestionType {
@@ -15,20 +15,19 @@ interface QuestionType {
   appearsIn?: string[];
 }
 
-
 interface AreaType {
   area: string;
   file: string;
-  type: "True False" | "Multiple Choice";
+  type: 'True False' | 'Multiple Choice';
   shortName: string;
 }
 
-const EMOJI_SUCCESS = "✅";
-const EMOJI_FAIL = "❌";
-const EMOJI_ASK = "❓";
-const EMOJI_SECTION = "📚";
-const EMOJI_PROGRESS = "📊";
-const EMOJI_DONE = "🎉";
+const EMOJI_SUCCESS = '✅';
+const EMOJI_FAIL = '❌';
+const EMOJI_ASK = '❓';
+const EMOJI_SECTION = '📚';
+const EMOJI_PROGRESS = '📊';
+const EMOJI_DONE = '🎉';
 
 function groupBySection(questions: QuestionType[]): Map<string, QuestionType[]> {
   const map = new Map<string, QuestionType[]>();
@@ -40,11 +39,11 @@ function groupBySection(questions: QuestionType[]): Map<string, QuestionType[]> 
 }
 
 function formatRichText(text?: string): { __html: string } {
-  if (!text) return { __html: "" };
-  const withLineBreaks = text.replace(/\n/g, "<br>");
+  if (!text) return { __html: '' };
+  const withLineBreaks = text.replace(/\n/g, '<br>');
   const sanitized = DOMPurify.sanitize(withLineBreaks, {
-    ADD_TAGS: ["table", "thead", "tbody", "tfoot", "tr", "td", "th", "br"],
-    ADD_ATTR: ["colspan", "rowspan", "style"],
+    ADD_TAGS: ['table', 'thead', 'tbody', 'tfoot', 'tr', 'td', 'th', 'br'],
+    ADD_ATTR: ['colspan', 'rowspan', 'style'],
   });
   return { __html: sanitized };
 }
@@ -54,17 +53,23 @@ export default function QuizApp() {
   const [allQuestions, setAllQuestions] = useState<QuestionType[]>([]); // All loaded questions
 
   const [questions, setQuestions] = useState<QuestionType[]>([]); // Filtered questions for this session
-  const [status, setStatus] = useState<Record<number, "correct" | "fail" | "pending">>({});
+  const [status, setStatus] = useState<Record<number, 'correct' | 'fail' | 'pending'>>({});
   // 'current' is the index in the filtered 'questions' array
   const [current, setCurrent] = useState<number | null>(null);
   const [showStatus, setShowStatus] = useState<boolean>(false);
-  const [showResult, setShowResult] = useState<null | { correct: boolean; explanation: string }>(null);
+  const [showResult, setShowResult] = useState<null | { correct: boolean; explanation: string }>(
+    null
+  );
   const [showSelectionMenu, setShowSelectionMenu] = useState<boolean>(true);
-  const [selectionMode, setSelectionMode] = useState<null | "all" | "sections" | "questions">(null);
+  const [selectionMode, setSelectionMode] = useState<null | 'all' | 'sections' | 'questions'>(null);
   const [selectedSections, setSelectedSections] = useState<Set<string>>(new Set());
   const [selectedQuestions, setSelectedQuestions] = useState<Set<number>>(new Set());
   const questionScrollRef = useRef<HTMLDivElement | null>(null);
-  const [questionScrollMeta, setQuestionScrollMeta] = useState<{ thumbTop: number; thumbHeight: number; show: boolean }>({ thumbTop: 0, thumbHeight: 0, show: false });
+  const [questionScrollMeta, setQuestionScrollMeta] = useState<{
+    thumbTop: number;
+    thumbHeight: number;
+    show: boolean;
+  }>({ thumbTop: 0, thumbHeight: 0, show: false });
   const resumeQuestionRef = useRef<number | null>(null);
   const currentLoadingAreaRef = useRef<string | null>(null);
 
@@ -72,7 +77,9 @@ export default function QuizApp() {
   const [areas, setAreas] = useState<AreaType[]>([]);
   const [selectedArea, setSelectedArea] = useState<AreaType | null>(null);
   const [showAreaSelection, setShowAreaSelection] = useState<boolean>(true);
-  const [currentQuizType, setCurrentQuizType] = useState<"True False" | "Multiple Choice" | null>(null);
+  const [currentQuizType, setCurrentQuizType] = useState<'True False' | 'Multiple Choice' | null>(
+    null
+  );
 
   // Shuffle questions toggle state
   const [shuffleQuestions, setShuffleQuestions] = useState<boolean>(true); // true = random, false = sequential
@@ -155,7 +162,7 @@ export default function QuizApp() {
         const oldQuizStatus = localStorage.getItem('quizStatus');
         if (oldQuizStatus) {
           // Try to migrate to all areas if not already present
-          areasData.forEach(area => {
+          areasData.forEach((area) => {
             const areaKey = area.shortName;
             if (!localStorage.getItem(`quizStatus_${areaKey}`)) {
               localStorage.setItem(`quizStatus_${areaKey}`, oldQuizStatus);
@@ -168,19 +175,23 @@ export default function QuizApp() {
         // Auto-restore last studied area (by shortName)
         const currentAreaShortName = localStorage.getItem('currentArea');
         if (currentAreaShortName) {
-          const areaToRestore = areasData.find(area => area.shortName === currentAreaShortName);
+          const areaToRestore = areasData.find((area) => area.shortName === currentAreaShortName);
           if (areaToRestore) {
             setSelectedArea(areaToRestore);
             setCurrentQuizType(areaToRestore.type);
             // Restore shuffleQuestions for this area
-            const savedShuffleQuestions = localStorage.getItem(`shuffleQuestions_${areaToRestore.shortName}`);
+            const savedShuffleQuestions = localStorage.getItem(
+              `shuffleQuestions_${areaToRestore.shortName}`
+            );
             if (savedShuffleQuestions !== null) {
               setShuffleQuestions(JSON.parse(savedShuffleQuestions));
             } else {
               setShuffleQuestions(true);
             }
             // Restore shuffleAnswers for this area
-            const savedShuffleAnswers = localStorage.getItem(`shuffleAnswers_${areaToRestore.shortName}`);
+            const savedShuffleAnswers = localStorage.getItem(
+              `shuffleAnswers_${areaToRestore.shortName}`
+            );
             if (savedShuffleAnswers !== null) {
               setShuffleAnswers(JSON.parse(savedShuffleAnswers));
             } else {
@@ -199,12 +210,12 @@ export default function QuizApp() {
     // Track the current area being loaded to prevent race conditions
     const loadingId = `${area.shortName}_${Date.now()}`;
     currentLoadingAreaRef.current = loadingId;
-    
+
     // Reset current state when switching areas to prevent cross-contamination
     setCurrent(null);
     // Reset questions immediately to prevent persistence useEffect from using wrong data
     setQuestions([]);
-    
+
     setSelectedArea(area);
     setCurrentQuizType(area.type);
     setShowAreaSelection(false);
@@ -221,40 +232,47 @@ export default function QuizApp() {
     if (currentLoadingAreaRef.current !== loadingId) return;
     if (response.ok) {
       const questionsData = await response.json();
-      const questionsWithIndex = questionsData.map((q: QuestionType, idx: number) => ({ ...q, index: idx }));
+      const questionsWithIndex = questionsData.map((q: QuestionType, idx: number) => ({
+        ...q,
+        index: idx,
+      }));
       if (currentLoadingAreaRef.current !== loadingId) return;
       setAllQuestions(questionsWithIndex);
-      let parsedStatus: Record<number, "correct" | "fail" | "pending"> = {};
+      let parsedStatus: Record<number, 'correct' | 'fail' | 'pending'> = {};
       if (savedStatus) {
         parsedStatus = JSON.parse(savedStatus);
       } else {
-        parsedStatus = questionsWithIndex.reduce((acc: Record<number, "correct" | "fail" | "pending">, q: QuestionType) => {
-          acc[q.index] = "pending";
-          return acc;
-        }, {});
+        parsedStatus = questionsWithIndex.reduce(
+          (acc: Record<number, 'correct' | 'fail' | 'pending'>, q: QuestionType) => {
+            acc[q.index] = 'pending';
+            return acc;
+          },
+          {}
+        );
       }
       setStatus(parsedStatus);
-      
+
       // Load shuffle preference for this area from localStorage
       const savedShuffleQuestions = localStorage.getItem(`shuffleQuestions_${areaKey}`);
-      const shouldShuffleQuestions = savedShuffleQuestions !== null ? JSON.parse(savedShuffleQuestions) : true;
-      
+      const shouldShuffleQuestions =
+        savedShuffleQuestions !== null ? JSON.parse(savedShuffleQuestions) : true;
+
       // Order questions according to shuffle preference
       let orderedQuestions = [...questionsWithIndex];
       if (!shouldShuffleQuestions) {
         orderedQuestions.sort((a, b) => a.number - b.number);
       }
-      
+
       // If we have saved selected questions, filter to only those questions
       if (savedSelectedQuestions) {
         const selectedIndices = JSON.parse(savedSelectedQuestions) as number[];
-        orderedQuestions = orderedQuestions.filter(q => selectedIndices.includes(q.index));
+        orderedQuestions = orderedQuestions.filter((q) => selectedIndices.includes(q.index));
       } else if (savedStatus) {
         // Legacy session without savedSelectedQuestions - infer from saved status indices
         const statusIndices = Object.keys(JSON.parse(savedStatus)).map(Number);
-        orderedQuestions = orderedQuestions.filter(q => statusIndices.includes(q.index));
+        orderedQuestions = orderedQuestions.filter((q) => statusIndices.includes(q.index));
       }
-      
+
       // If forced via parameter, always show the menu on area change
       if (forceMenu) {
         setQuestions([]);
@@ -266,7 +284,9 @@ export default function QuizApp() {
         return;
       }
       // If all questions are answered, show the menu and clean up currentQuestion
-      const allAnswered = Object.values(parsedStatus).length > 0 && Object.values(parsedStatus).every(s => s !== "pending");
+      const allAnswered =
+        Object.values(parsedStatus).length > 0 &&
+        Object.values(parsedStatus).every((s) => s !== 'pending');
       if (allAnswered) {
         localStorage.removeItem(`currentQuestion_${areaKey}`);
         setQuestions([]);
@@ -295,19 +315,21 @@ export default function QuizApp() {
           idx = n;
         } else {
           // If savedCurrent is out of range, find first pending
-          const nextPending = orderedQuestions.findIndex(q => parsedStatus[q.index] === "pending");
+          const nextPending = orderedQuestions.findIndex(
+            (q) => parsedStatus[q.index] === 'pending'
+          );
           if (nextPending !== -1) {
             idx = nextPending;
           }
         }
       } else {
         // If no saved current, try to resume at first pending
-        const nextPending = orderedQuestions.findIndex(q => parsedStatus[q.index] === "pending");
+        const nextPending = orderedQuestions.findIndex((q) => parsedStatus[q.index] === 'pending');
         if (nextPending !== -1) {
           idx = nextPending;
         }
       }
-      
+
       setQuestions(orderedQuestions);
       setCurrent(idx);
       setShowSelectionMenu(false);
@@ -337,7 +359,7 @@ export default function QuizApp() {
       const statusKeys = Object.keys(status).map(Number);
       const expectedLength = questions.length;
       const statusMatchesCurrentArea = statusKeys.length === expectedLength;
-      
+
       if (statusMatchesCurrentArea) {
         localStorage.setItem(`quizStatus_${areaKey}`, JSON.stringify(status));
       }
@@ -346,7 +368,7 @@ export default function QuizApp() {
 
   // Keep a visible scroll indicator for the question selection view
   useEffect(() => {
-    if (selectionMode !== "questions") return;
+    if (selectionMode !== 'questions') return;
 
     function updateScrollIndicator() {
       const el = questionScrollRef.current;
@@ -355,19 +377,22 @@ export default function QuizApp() {
       const maxScrollTop = Math.max(scrollHeight - clientHeight, 0);
       const show = maxScrollTop > 0;
       const trackHeight = clientHeight;
-      const thumbHeight = show ? Math.max((clientHeight / scrollHeight) * trackHeight, 20) : trackHeight;
-      const thumbTop = show && maxScrollTop > 0 ? (scrollTop / maxScrollTop) * (trackHeight - thumbHeight) : 0;
+      const thumbHeight = show
+        ? Math.max((clientHeight / scrollHeight) * trackHeight, 20)
+        : trackHeight;
+      const thumbTop =
+        show && maxScrollTop > 0 ? (scrollTop / maxScrollTop) * (trackHeight - thumbHeight) : 0;
       setQuestionScrollMeta({ thumbTop, thumbHeight, show });
     }
 
     const el = questionScrollRef.current;
     updateScrollIndicator();
     if (!el) return;
-    el.addEventListener("scroll", updateScrollIndicator);
-    window.addEventListener("resize", updateScrollIndicator);
+    el.addEventListener('scroll', updateScrollIndicator);
+    window.addEventListener('resize', updateScrollIndicator);
     return () => {
-      el.removeEventListener("scroll", updateScrollIndicator);
-      window.removeEventListener("resize", updateScrollIndicator);
+      el.removeEventListener('scroll', updateScrollIndicator);
+      window.removeEventListener('resize', updateScrollIndicator);
     };
   }, [selectionMode, allQuestions.length]);
 
@@ -375,7 +400,7 @@ export default function QuizApp() {
   const pendingQuestions = useCallback(() => {
     return questions
       .map((q, i) => [i, q] as [number, QuestionType])
-      .filter(([, q]) => status[q.index] === "pending");
+      .filter(([, q]) => status[q.index] === 'pending');
   }, [questions, status]);
 
   // Reset quiz state
@@ -399,11 +424,11 @@ export default function QuizApp() {
         `quizStatus_${areaKey}`,
         `currentQuestion_${areaKey}`,
         `selectedQuestions_${areaKey}`,
-        `questionOrder_${areaKey}`
+        `questionOrder_${areaKey}`,
       ];
 
       // Method 1: Standard removal with error handling
-      keysToRemove.forEach(key => {
+      keysToRemove.forEach((key) => {
         try {
           localStorage.removeItem(key);
         } catch (error) {
@@ -414,7 +439,7 @@ export default function QuizApp() {
       // Method 2: Verification and retry for iOS Safari edge cases
       // Some iOS versions may not immediately remove items
       setTimeout(() => {
-        keysToRemove.forEach(key => {
+        keysToRemove.forEach((key) => {
           try {
             if (localStorage.getItem(key) !== null) {
               localStorage.removeItem(key);
@@ -428,7 +453,7 @@ export default function QuizApp() {
 
       // Method 3: iOS Safari fallback - try setting to empty string if removal fails
       setTimeout(() => {
-        keysToRemove.forEach(key => {
+        keysToRemove.forEach((key) => {
           try {
             if (localStorage.getItem(key) !== null) {
               localStorage.setItem(key, '');
@@ -459,14 +484,20 @@ export default function QuizApp() {
     localStorage.removeItem(`selectedQuestions_${areaKey}`); // Clear selected questions
     const orderedQuestions = getOrderedQuestions(allQuestions);
     setQuestions(orderedQuestions);
-    const newStatus: Record<number, "correct" | "fail" | "pending"> = orderedQuestions.reduce((acc, q) => {
-      acc[q.index] = "pending";
-      return acc;
-    }, {} as Record<number, "correct" | "fail" | "pending">);
+    const newStatus: Record<number, 'correct' | 'fail' | 'pending'> = orderedQuestions.reduce(
+      (acc, q) => {
+        acc[q.index] = 'pending';
+        return acc;
+      },
+      {} as Record<number, 'correct' | 'fail' | 'pending'>
+    );
     setStatus(newStatus);
     localStorage.setItem(`quizStatus_${areaKey}`, JSON.stringify(newStatus));
     // Store selected questions for session restoration
-    localStorage.setItem(`selectedQuestions_${areaKey}`, JSON.stringify(orderedQuestions.map(q => q.index)));
+    localStorage.setItem(
+      `selectedQuestions_${areaKey}`,
+      JSON.stringify(orderedQuestions.map((q) => q.index))
+    );
     if (orderedQuestions.length > 0) {
       setCurrent(0);
       setShowStatus(false);
@@ -483,27 +514,36 @@ export default function QuizApp() {
   const startQuizSections = useCallback(() => {
     if (!selectedArea) return;
     const areaKey = selectedArea.shortName;
-    const filtered = allQuestions.filter(q => selectedSections.has(q.section));
+    const filtered = allQuestions.filter((q) => selectedSections.has(q.section));
     const orderedQuestions = getOrderedQuestions(filtered);
     setQuestions(orderedQuestions);
     const savedStatus = localStorage.getItem(`quizStatus_${areaKey}`);
-    let newStatus: Record<number, "correct" | "fail" | "pending">;
+    let newStatus: Record<number, 'correct' | 'fail' | 'pending'>;
     if (savedStatus) {
       const parsedStatus = JSON.parse(savedStatus);
-      newStatus = filtered.reduce((acc: Record<number, "correct" | "fail" | "pending">, q: QuestionType) => {
-        acc[q.index] = parsedStatus[q.index] || "pending";
-        return acc;
-      }, {});
+      newStatus = filtered.reduce(
+        (acc: Record<number, 'correct' | 'fail' | 'pending'>, q: QuestionType) => {
+          acc[q.index] = parsedStatus[q.index] || 'pending';
+          return acc;
+        },
+        {}
+      );
     } else {
-      newStatus = filtered.reduce((acc: Record<number, "correct" | "fail" | "pending">, q: QuestionType) => {
-        acc[q.index] = "pending";
-        return acc;
-      }, {});
+      newStatus = filtered.reduce(
+        (acc: Record<number, 'correct' | 'fail' | 'pending'>, q: QuestionType) => {
+          acc[q.index] = 'pending';
+          return acc;
+        },
+        {}
+      );
     }
     setStatus(newStatus);
     localStorage.setItem(`quizStatus_${areaKey}`, JSON.stringify(newStatus));
     // Store selected questions for session restoration
-    localStorage.setItem(`selectedQuestions_${areaKey}`, JSON.stringify(orderedQuestions.map(q => q.index)));
+    localStorage.setItem(
+      `selectedQuestions_${areaKey}`,
+      JSON.stringify(orderedQuestions.map((q) => q.index))
+    );
     // Always start at the beginning when starting a new section selection
     if (filtered.length > 0) {
       setCurrent(0);
@@ -521,27 +561,36 @@ export default function QuizApp() {
   const startQuizQuestions = useCallback(() => {
     if (!selectedArea) return;
     const areaKey = selectedArea.shortName;
-    const filtered = allQuestions.filter(q => selectedQuestions.has(q.index));
+    const filtered = allQuestions.filter((q) => selectedQuestions.has(q.index));
     const orderedQuestions = getOrderedQuestions(filtered);
     setQuestions(orderedQuestions);
     const savedStatus = localStorage.getItem(`quizStatus_${areaKey}`);
-    let newStatus: Record<number, "correct" | "fail" | "pending">;
+    let newStatus: Record<number, 'correct' | 'fail' | 'pending'>;
     if (savedStatus) {
       const parsedStatus = JSON.parse(savedStatus);
-      newStatus = filtered.reduce((acc: Record<number, "correct" | "fail" | "pending">, q: QuestionType) => {
-        acc[q.index] = parsedStatus[q.index] || "pending";
-        return acc;
-      }, {});
+      newStatus = filtered.reduce(
+        (acc: Record<number, 'correct' | 'fail' | 'pending'>, q: QuestionType) => {
+          acc[q.index] = parsedStatus[q.index] || 'pending';
+          return acc;
+        },
+        {}
+      );
     } else {
-      newStatus = filtered.reduce((acc: Record<number, "correct" | "fail" | "pending">, q: QuestionType) => {
-        acc[q.index] = "pending";
-        return acc;
-      }, {});
+      newStatus = filtered.reduce(
+        (acc: Record<number, 'correct' | 'fail' | 'pending'>, q: QuestionType) => {
+          acc[q.index] = 'pending';
+          return acc;
+        },
+        {}
+      );
     }
     setStatus(newStatus);
     localStorage.setItem(`quizStatus_${areaKey}`, JSON.stringify(newStatus));
     // Store selected questions for session restoration
-    localStorage.setItem(`selectedQuestions_${areaKey}`, JSON.stringify(orderedQuestions.map(q => q.index)));
+    localStorage.setItem(
+      `selectedQuestions_${areaKey}`,
+      JSON.stringify(orderedQuestions.map((q) => q.index))
+    );
     // Always start at the beginning when starting a new question selection
     if (filtered.length > 0) {
       setCurrent(0);
@@ -563,25 +612,30 @@ export default function QuizApp() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const questionsData = await response.json();
-      
+
       // Add indices to questions for tracking
-      const questionsWithIndex = questionsData.map((q: QuestionType, idx: number) => ({ ...q, index: idx }));
+      const questionsWithIndex = questionsData.map((q: QuestionType, idx: number) => ({
+        ...q,
+        index: idx,
+      }));
       setAllQuestions(questionsWithIndex);
-      
+
       // Load saved status for this area
       const areaKey = area.shortName;
       const savedStatus = localStorage.getItem(`quizStatus_${areaKey}`);
-        if (savedStatus) {
-          setStatus(JSON.parse(savedStatus));
-        } else {
-          // Initialize all questions as pending
-          const pendingStatus = questionsWithIndex.reduce((acc: Record<number, "correct" | "fail" | "pending">, q: QuestionType) => {
-            acc[q.index] = "pending";
+      if (savedStatus) {
+        setStatus(JSON.parse(savedStatus));
+      } else {
+        // Initialize all questions as pending
+        const pendingStatus = questionsWithIndex.reduce(
+          (acc: Record<number, 'correct' | 'fail' | 'pending'>, q: QuestionType) => {
+            acc[q.index] = 'pending';
             return acc;
-          }, {});
-          setStatus(pendingStatus);
-        }
-      
+          },
+          {}
+        );
+        setStatus(pendingStatus);
+      }
     } catch (error) {
       console.error('Error loading questions:', error);
       setAllQuestions([]);
@@ -605,8 +659,12 @@ export default function QuizApp() {
               aria-label={`Estudiar ${area.area}`}
             >
               <span className="font-mono mr-2">({index + 1})</span>
-              <span className="text-3xl font-extrabold tracking-widest leading-none">{area.shortName.toUpperCase()}</span>
-              <span className="text-base font-normal text-blue-100 mt-1" style={{ lineHeight: 1 }}>{area.area}</span>
+              <span className="text-3xl font-extrabold tracking-widest leading-none">
+                {area.shortName.toUpperCase()}
+              </span>
+              <span className="text-base font-normal text-blue-100 mt-1" style={{ lineHeight: 1 }}>
+                {area.area}
+              </span>
             </button>
           ))}
         </div>
@@ -620,9 +678,7 @@ export default function QuizApp() {
       <div className="space-y-8 flex flex-col items-center justify-center">
         {/* Show area name at top */}
         {selectedArea && (
-          <div className="text-lg font-bold text-blue-600 mb-2">
-            🎓 Área: {selectedArea.area}
-          </div>
+          <div className="text-lg font-bold text-blue-600 mb-2">🎓 Área: {selectedArea.area}</div>
         )}
         <div className="text-2xl font-bold mb-4">¿Cómo quieres las preguntas?</div>
         {/* Question Order Selection */}
@@ -643,12 +699,14 @@ export default function QuizApp() {
               <input
                 type="checkbox"
                 checked={!shuffleQuestions}
-                onChange={e => setShuffleQuestions(!e.target.checked)}
+                onChange={(e) => setShuffleQuestions(!e.target.checked)}
                 className="sr-only peer"
                 aria-label="Alternar orden de preguntas"
               />
               <div className="w-14 h-8 bg-gray-200 rounded-full peer peer-focus:ring-2 peer-focus:ring-blue-500 transition-all duration-300">
-                <div className={`absolute left-0 top-0 h-8 w-8 rounded-full bg-blue-600 transition-transform duration-300 ${!shuffleQuestions ? 'translate-x-6' : ''}`}></div>
+                <div
+                  className={`absolute left-0 top-0 h-8 w-8 rounded-full bg-blue-600 transition-transform duration-300 ${!shuffleQuestions ? 'translate-x-6' : ''}`}
+                ></div>
               </div>
             </label>
             <span
@@ -666,7 +724,8 @@ export default function QuizApp() {
         <div className="flex flex-col items-center space-y-2 mb-4">
           <div className="text-lg font-semibold mb-2">Orden de respuestas:</div>
           <div className="flex items-center justify-center w-64">
-            <span className={`text-sm font-medium mr-3 cursor-pointer ${!shuffleAnswers ? 'text-blue-600' : 'text-gray-500'}`}
+            <span
+              className={`text-sm font-medium mr-3 cursor-pointer ${!shuffleAnswers ? 'text-blue-600' : 'text-gray-500'}`}
               onClick={() => setShuffleAnswers(false)}
               tabIndex={0}
               role="button"
@@ -678,15 +737,18 @@ export default function QuizApp() {
               <input
                 type="checkbox"
                 checked={shuffleAnswers}
-                onChange={e => setShuffleAnswers(e.target.checked)}
+                onChange={(e) => setShuffleAnswers(e.target.checked)}
                 className="sr-only peer"
                 aria-label="Alternar orden de respuestas"
               />
               <div className="w-14 h-8 bg-gray-200 rounded-full peer peer-focus:ring-2 peer-focus:ring-blue-500 transition-all duration-300">
-                <div className={`absolute left-0 top-0 h-8 w-8 rounded-full bg-blue-600 transition-transform duration-300 ${shuffleAnswers ? 'translate-x-6' : ''}`}></div>
+                <div
+                  className={`absolute left-0 top-0 h-8 w-8 rounded-full bg-blue-600 transition-transform duration-300 ${shuffleAnswers ? 'translate-x-6' : ''}`}
+                ></div>
               </div>
             </label>
-            <span className={`text-sm font-medium ml-3 cursor-pointer ${shuffleAnswers ? 'text-blue-600' : 'text-gray-500'}`}
+            <span
+              className={`text-sm font-medium ml-3 cursor-pointer ${shuffleAnswers ? 'text-blue-600' : 'text-gray-500'}`}
               onClick={() => setShuffleAnswers(true)}
               tabIndex={0}
               role="button"
@@ -696,20 +758,53 @@ export default function QuizApp() {
             </span>
           </div>
         </div>
-        <button className="px-6 py-3 bg-blue-600 text-white rounded text-lg w-64" onClick={() => { setSelectionMode("all"); startQuizAll(); }} aria-label="Todas las preguntas">Todas las preguntas</button>
-        <button className="px-6 py-3 bg-green-600 text-white rounded text-lg w-64" onClick={() => { setSelectionMode("sections"); }} aria-label="Seleccionar secciones">Seleccionar secciones</button>
-        <button className="px-6 py-3 bg-purple-600 text-white rounded text-lg w-64" onClick={() => { setSelectionMode("questions"); }} aria-label="Seleccionar preguntas">Seleccionar preguntas</button>
-        <button className="px-6 py-3 bg-gray-500 text-white rounded text-lg w-64 mt-6" onClick={() => { setShowAreaSelection(true); setShowSelectionMenu(false); localStorage.removeItem('currentArea'); }} aria-label="Cambiar área">Cambiar área</button>
+        <button
+          className="px-6 py-3 bg-blue-600 text-white rounded text-lg w-64"
+          onClick={() => {
+            setSelectionMode('all');
+            startQuizAll();
+          }}
+          aria-label="Todas las preguntas"
+        >
+          Todas las preguntas
+        </button>
+        <button
+          className="px-6 py-3 bg-green-600 text-white rounded text-lg w-64"
+          onClick={() => {
+            setSelectionMode('sections');
+          }}
+          aria-label="Seleccionar secciones"
+        >
+          Seleccionar secciones
+        </button>
+        <button
+          className="px-6 py-3 bg-purple-600 text-white rounded text-lg w-64"
+          onClick={() => {
+            setSelectionMode('questions');
+          }}
+          aria-label="Seleccionar preguntas"
+        >
+          Seleccionar preguntas
+        </button>
+        <button
+          className="px-6 py-3 bg-gray-500 text-white rounded text-lg w-64 mt-6"
+          onClick={() => {
+            setShowAreaSelection(true);
+            setShowSelectionMenu(false);
+            localStorage.removeItem('currentArea');
+          }}
+          aria-label="Cambiar área"
+        >
+          Cambiar área
+        </button>
       </div>
     );
   }
 
-
-
   // Section selection UI
   function renderSectionSelection() {
     // Get unique sections
-    const sections = Array.from(new Set(allQuestions.map(q => q.section)));
+    const sections = Array.from(new Set(allQuestions.map((q) => q.section)));
     const allChecked = selectedSections.size === sections.length;
     const noneChecked = selectedSections.size === 0;
     const handleCheckAll = () => setSelectedSections(new Set(sections));
@@ -718,9 +813,7 @@ export default function QuizApp() {
       <div className="space-y-8 flex flex-col items-center justify-center">
         {/* Show area name at top */}
         {selectedArea && (
-          <div className="text-lg font-bold text-blue-600 mb-2">
-            🎓 Área: {selectedArea.area}
-          </div>
+          <div className="text-lg font-bold text-blue-600 mb-2">🎓 Área: {selectedArea.area}</div>
         )}
         <div className="text-2xl font-bold mb-4">Selecciona las secciones</div>
         <div className="flex gap-4 mb-2">
@@ -740,12 +833,12 @@ export default function QuizApp() {
           </button>
         </div>
         <div className="flex flex-col gap-2 mb-4">
-          {sections.map(section => (
+          {sections.map((section) => (
             <label key={section} className="flex items-center gap-2">
               <input
                 type="checkbox"
                 checked={selectedSections.has(section)}
-                onChange={e => {
+                onChange={(e) => {
                   const newSet = new Set(selectedSections);
                   if (e.target.checked) newSet.add(section);
                   else newSet.delete(section);
@@ -765,7 +858,9 @@ export default function QuizApp() {
           >
             Empezar
           </button>
-          <button className="px-6 py-3 bg-gray-400 text-white rounded text-lg" onClick={resetQuiz}>Cancelar</button>
+          <button className="px-6 py-3 bg-gray-400 text-white rounded text-lg" onClick={resetQuiz}>
+            Cancelar
+          </button>
         </div>
       </div>
     );
@@ -779,24 +874,27 @@ export default function QuizApp() {
       <div className="space-y-8 flex flex-col items-center justify-center">
         {/* Show area name at top */}
         {selectedArea && (
-          <div className="text-lg font-bold text-blue-600 mb-2">
-            🎓 Área: {selectedArea.area}
-          </div>
+          <div className="text-lg font-bold text-blue-600 mb-2">🎓 Área: {selectedArea.area}</div>
         )}
         <div className="text-2xl font-bold mb-4">Selecciona las preguntas</div>
         <div className="relative w-full">
           <div ref={questionScrollRef} className="max-h-96 overflow-y-auto w-full pr-4">
             {[...grouped.entries()].map(([section, qs]) => (
               <div key={section} className="mb-6">
-                <div className="font-bold text-lg mb-2">{EMOJI_SECTION} {section}</div>
+                <div className="font-bold text-lg mb-2">
+                  {EMOJI_SECTION} {section}
+                </div>
                 <div className="grid grid-cols-5 gap-2">
                   {qs.map((q: QuestionType) => (
-                    <label key={q.index} className="flex flex-row items-center justify-center cursor-pointer select-none gap-2">
+                    <label
+                      key={q.index}
+                      className="flex flex-row items-center justify-center cursor-pointer select-none gap-2"
+                    >
                       <span className="text-2xl">{q.number}</span>
                       <input
                         type="checkbox"
                         checked={selectedQuestions.has(q.index)}
-                        onChange={e => {
+                        onChange={(e) => {
                           const newSet = new Set(selectedQuestions);
                           if (e.target.checked) newSet.add(q.index);
                           else newSet.delete(q.index);
@@ -813,7 +911,10 @@ export default function QuizApp() {
             <div className="absolute top-0 right-1 h-full w-2 rounded-full bg-slate-200 pointer-events-none">
               <div
                 className="w-full bg-slate-500 rounded-full"
-                style={{ height: `${questionScrollMeta.thumbHeight}px`, transform: `translateY(${questionScrollMeta.thumbTop}px)` }}
+                style={{
+                  height: `${questionScrollMeta.thumbHeight}px`,
+                  transform: `translateY(${questionScrollMeta.thumbTop}px)`,
+                }}
               />
             </div>
           )}
@@ -827,41 +928,50 @@ export default function QuizApp() {
           >
             Empezar
           </button>
-          <button className="px-6 py-3 bg-gray-400 text-white rounded text-lg" onClick={resetQuiz}>Cancelar</button>
+          <button className="px-6 py-3 bg-gray-400 text-white rounded text-lg" onClick={resetQuiz}>
+            Cancelar
+          </button>
         </div>
       </div>
     );
   }
 
-  const handleAnswer = useCallback((ans: string) => {
-    if (current == null || !selectedArea) return;
-    const q = questions[current];
-    const expected = q.answer.trim().toUpperCase();
-    const user = ans.trim().toUpperCase();
+  const handleAnswer = useCallback(
+    (ans: string) => {
+      if (current == null || !selectedArea) return;
+      const q = questions[current];
+      const expected = q.answer.trim().toUpperCase();
+      const user = ans.trim().toUpperCase();
 
-    let correct = false;
+      let correct = false;
 
-    if (currentQuizType === "True False") {
-      // True/False logic (existing)
-      correct = (user === expected) ||
-        (user === "V" && expected === "VERDADERO") ||
-        (user === "F" && expected === "FALSO") ||
-        (user === "VERDADERO" && expected === "V") ||
-        (user === "FALSO" && expected === "F");
-    } else if (currentQuizType === "Multiple Choice") {
-      // Multiple choice logic - convert letter to option text and compare
-      const userLetter = user.toLowerCase();
-      const userIndex = userLetter.charCodeAt(0) - 97; // 'a' = 0, 'b' = 1, 'c' = 2, etc.
-      const userAnswer = q.options?.[userIndex] || '';
-      correct = userAnswer === q.answer;
-    }
+      if (currentQuizType === 'True False') {
+        // True/False logic (existing)
+        correct =
+          user === expected ||
+          (user === 'V' && expected === 'VERDADERO') ||
+          (user === 'F' && expected === 'FALSO') ||
+          (user === 'VERDADERO' && expected === 'V') ||
+          (user === 'FALSO' && expected === 'F');
+      } else if (currentQuizType === 'Multiple Choice') {
+        // Multiple choice logic - convert letter to option text and compare
+        const userLetter = user.toLowerCase();
+        const userIndex = userLetter.charCodeAt(0) - 97; // 'a' = 0, 'b' = 1, 'c' = 2, etc.
+        const userAnswer = q.options?.[userIndex] || '';
+        correct = userAnswer === q.answer;
+      }
 
-    const newStatus: Record<number, "correct" | "fail" | "pending"> = { ...status, [q.index]: correct ? "correct" : "fail" };
-    setStatus(newStatus);
-    const areaKey = selectedArea.shortName;
-    localStorage.setItem(`quizStatus_${areaKey}`, JSON.stringify(newStatus));
-    setShowResult({ correct, explanation: q.explanation });
-  }, [current, questions, status, selectedArea, currentQuizType]);
+      const newStatus: Record<number, 'correct' | 'fail' | 'pending'> = {
+        ...status,
+        [q.index]: correct ? 'correct' : 'fail',
+      };
+      setStatus(newStatus);
+      const areaKey = selectedArea.shortName;
+      localStorage.setItem(`quizStatus_${areaKey}`, JSON.stringify(newStatus));
+      setShowResult({ correct, explanation: q.explanation });
+    },
+    [current, questions, status, selectedArea, currentQuizType]
+  );
 
   const nextQuestion = useCallback(() => {
     const pending = pendingQuestions();
@@ -882,7 +992,11 @@ export default function QuizApp() {
       // Find the next higher-numbered pending
       let found = false;
       for (let i = 0; i < pendingSorted.length; ++i) {
-        if (current !== null && questions[current] && pendingSorted[i].number > questions[current].number) {
+        if (
+          current !== null &&
+          questions[current] &&
+          pendingSorted[i].number > questions[current].number
+        ) {
           nextIdx = pendingSorted[i].idx;
           found = true;
           break;
@@ -905,36 +1019,39 @@ export default function QuizApp() {
     setShowResult(null);
   }, [pendingQuestions]);
 
-  const handleContinue = useCallback((action: string) => {
-    if (action === "C" && showResult) {
-      resumeQuestionRef.current = null;
-      canResumeRef.current = false;
-      nextQuestion();
-      return;
-    }
-        if (action === "E") {
-      if (!showResult && current !== null) {
-        resumeQuestionRef.current = current;
-        canResumeRef.current = true;
-      } else {
-        resumeQuestionRef.current = null;
-        canResumeRef.current = false;
-      }
-            setShowStatus(true);
-      setShowResult(null);
-    } else {
-      if (resumeQuestionRef.current !== null && canResumeRef.current) {
-        setShowStatus(false);
-        setCurrent(resumeQuestionRef.current);
-        resumeQuestionRef.current = null;
-        canResumeRef.current = false;
-      } else {
+  const handleContinue = useCallback(
+    (action: string) => {
+      if (action === 'C' && showResult) {
         resumeQuestionRef.current = null;
         canResumeRef.current = false;
         nextQuestion();
+        return;
       }
-    }
-  }, [showResult, current, nextQuestion]);
+      if (action === 'E') {
+        if (!showResult && current !== null) {
+          resumeQuestionRef.current = current;
+          canResumeRef.current = true;
+        } else {
+          resumeQuestionRef.current = null;
+          canResumeRef.current = false;
+        }
+        setShowStatus(true);
+        setShowResult(null);
+      } else {
+        if (resumeQuestionRef.current !== null && canResumeRef.current) {
+          setShowStatus(false);
+          setCurrent(resumeQuestionRef.current);
+          resumeQuestionRef.current = null;
+          canResumeRef.current = false;
+        } else {
+          resumeQuestionRef.current = null;
+          canResumeRef.current = false;
+          nextQuestion();
+        }
+      }
+    },
+    [showResult, current, nextQuestion]
+  );
 
   // Helper to go to status and enable resume (only from question view)
   const goToStatusWithResume = useCallback(() => {
@@ -949,27 +1066,36 @@ export default function QuizApp() {
   // Status grid rendering
   function renderStatusGrid() {
     const grouped = groupBySection(questions);
-    const correctCount = Object.values(status).filter((s) => s === "correct").length;
-    const failCount = Object.values(status).filter((s) => s === "fail").length;
+    const correctCount = Object.values(status).filter((s) => s === 'correct').length;
+    const failCount = Object.values(status).filter((s) => s === 'fail').length;
     const pendingCount = questions.length - (correctCount + failCount);
     const actionButtons = (
       <div className="flex gap-4 mt-6">
-        <button className="px-4 py-2 bg-blue-600 text-white rounded" onClick={() => handleContinue("C")} disabled={pendingQuestions().length === 0} aria-label="Continuar">
-          {pendingQuestions().length === 0 ? EMOJI_DONE + " ¡Completado!" : "Continuar"}
+        <button
+          className="px-4 py-2 bg-blue-600 text-white rounded"
+          onClick={() => handleContinue('C')}
+          disabled={pendingQuestions().length === 0}
+          aria-label="Continuar"
+        >
+          {pendingQuestions().length === 0 ? EMOJI_DONE + ' ¡Completado!' : 'Continuar'}
         </button>
-        <button 
-          className="px-4 py-2 bg-orange-500 text-white rounded" 
+        <button
+          className="px-4 py-2 bg-orange-500 text-white rounded"
           onClick={resetQuiz}
           onTouchEnd={resetQuiz}
           aria-label="Volver a empezar"
         >
           🔄 Volver a empezar
         </button>
-        <button className="px-4 py-2 bg-gray-500 text-white rounded" onClick={() => { 
-          setShowAreaSelection(true); 
-          setShowStatus(false);
-          setShowResult(null);
-        }} aria-label="Cambiar área">
+        <button
+          className="px-4 py-2 bg-gray-500 text-white rounded"
+          onClick={() => {
+            setShowAreaSelection(true);
+            setShowStatus(false);
+            setShowResult(null);
+          }}
+          aria-label="Cambiar área"
+        >
           Cambiar área
         </button>
       </div>
@@ -978,28 +1104,37 @@ export default function QuizApp() {
       <div className="space-y-8">
         {/* Show area name at top */}
         {selectedArea && (
-          <div className="text-lg font-bold text-blue-600 mb-2">
-            🎓 Área: {selectedArea.area}
-          </div>
+          <div className="text-lg font-bold text-blue-600 mb-2">🎓 Área: {selectedArea.area}</div>
         )}
         {actionButtons}
         <div className="mt-2 text-base flex items-center gap-2">
           {EMOJI_PROGRESS} {questions.length}
-          <span className="ml-2">| {EMOJI_SUCCESS} {correctCount}</span>
-          <span>| {EMOJI_FAIL} {failCount}</span>
-          <span>| {EMOJI_ASK} {pendingCount}</span>
+          <span className="ml-2">
+            | {EMOJI_SUCCESS} {correctCount}
+          </span>
+          <span>
+            | {EMOJI_FAIL} {failCount}
+          </span>
+          <span>
+            | {EMOJI_ASK} {pendingCount}
+          </span>
         </div>
         {[...grouped.entries()].map(([section, qs]) => (
           <div key={section}>
-            <div className="font-bold text-lg mb-2">{EMOJI_SECTION} {section}</div>
+            <div className="font-bold text-lg mb-2">
+              {EMOJI_SECTION} {section}
+            </div>
             <div className="grid grid-cols-5 gap-2">
               {qs.map((q: QuestionType) => {
                 let emoji = EMOJI_ASK;
-                if (status[q.index] === "correct") emoji = EMOJI_SUCCESS;
-                else if (status[q.index] === "fail") emoji = EMOJI_FAIL;
+                if (status[q.index] === 'correct') emoji = EMOJI_SUCCESS;
+                else if (status[q.index] === 'fail') emoji = EMOJI_FAIL;
                 return (
                   <div key={q.index} className="flex flex-col items-center">
-                    <span className="text-2xl">{q.number}{emoji}</span>
+                    <span className="text-2xl">
+                      {q.number}
+                      {emoji}
+                    </span>
                   </div>
                 );
               })}
@@ -1020,24 +1155,30 @@ export default function QuizApp() {
   function renderQuestion() {
     if (current == null) return null;
     const q = questions[current];
-    const correctCount = Object.values(status).filter((s) => s === "correct").length;
-    const failCount = Object.values(status).filter((s) => s === "fail").length;
+    const correctCount = Object.values(status).filter((s) => s === 'correct').length;
+    const failCount = Object.values(status).filter((s) => s === 'fail').length;
     const pendingCount = questions.length - (correctCount + failCount);
     return (
       <div className="space-y-6">
         {/* Show area name at top */}
         {selectedArea && (
-          <div className="text-lg font-bold text-blue-600 mb-2">
-            🎓 Área: {selectedArea.area}
-          </div>
+          <div className="text-lg font-bold text-blue-600 mb-2">🎓 Área: {selectedArea.area}</div>
         )}
-        <div className="font-bold text-lg">{EMOJI_SECTION} {q.section}</div>
+        <div className="font-bold text-lg">
+          {EMOJI_SECTION} {q.section}
+        </div>
         <div className="mt-2 text-sm">
           <div className="mt-2 text-base flex items-center gap-2">
             {EMOJI_PROGRESS} {questions.length}
-            <span className="ml-2">| {EMOJI_SUCCESS} {correctCount}</span>
-            <span>| {EMOJI_FAIL} {failCount}</span>
-            <span>| {EMOJI_ASK} {pendingCount}</span>
+            <span className="ml-2">
+              | {EMOJI_SUCCESS} {correctCount}
+            </span>
+            <span>
+              | {EMOJI_FAIL} {failCount}
+            </span>
+            <span>
+              | {EMOJI_ASK} {pendingCount}
+            </span>
           </div>
         </div>
         <div
@@ -1055,11 +1196,11 @@ export default function QuizApp() {
             </ul>
           </div>
         )}
-        {currentQuizType === "Multiple Choice" && Array.isArray(q.options) && (
+        {currentQuizType === 'Multiple Choice' && Array.isArray(q.options) && (
           <div className="mt-4 space-y-2">
             {(() => {
               // Shuffle options if shuffleAnswers is true
-              const displayOptions = shuffleAnswers 
+              const displayOptions = shuffleAnswers
                 ? [...q.options].sort(() => Math.random() - 0.5)
                 : q.options;
               return displayOptions.map((option: string, index: number) => {
@@ -1073,13 +1214,28 @@ export default function QuizApp() {
             })()}
           </div>
         )}
-        
+
         {/* Render buttons based on quiz type */}
-        {currentQuizType === "True False" ? (
+        {currentQuizType === 'True False' ? (
           <div className="flex gap-4 mt-4">
-            <button className="px-6 py-2 bg-green-600 text-white rounded text-lg" onClick={() => handleAnswer("V")}>V</button>
-            <button className="px-6 py-2 bg-red-600 text-white rounded text-lg" onClick={() => handleAnswer("F")}>F</button>
-            <button className="px-6 py-2 bg-gray-400 text-white rounded text-lg" onClick={goToStatusWithResume}>Options</button>
+            <button
+              className="px-6 py-2 bg-green-600 text-white rounded text-lg"
+              onClick={() => handleAnswer('V')}
+            >
+              V
+            </button>
+            <button
+              className="px-6 py-2 bg-red-600 text-white rounded text-lg"
+              onClick={() => handleAnswer('F')}
+            >
+              F
+            </button>
+            <button
+              className="px-6 py-2 bg-gray-400 text-white rounded text-lg"
+              onClick={goToStatusWithResume}
+            >
+              Options
+            </button>
           </div>
         ) : (
           // Multiple Choice A/B/C buttons
@@ -1087,7 +1243,7 @@ export default function QuizApp() {
             {(() => {
               if (!Array.isArray(q.options)) return null;
               // Shuffle options if shuffleAnswers is true
-              const displayOptions = shuffleAnswers 
+              const displayOptions = shuffleAnswers
                 ? [...q.options].sort(() => Math.random() - 0.5)
                 : q.options;
               return displayOptions.map((option: string, index: number) => {
@@ -1103,7 +1259,12 @@ export default function QuizApp() {
                 );
               });
             })()}
-            <button className="px-6 py-2 bg-gray-400 text-white rounded text-lg" onClick={goToStatusWithResume}>Options</button>
+            <button
+              className="px-6 py-2 bg-gray-400 text-white rounded text-lg"
+              onClick={goToStatusWithResume}
+            >
+              Options
+            </button>
           </div>
         )}
       </div>
@@ -1113,30 +1274,37 @@ export default function QuizApp() {
   // Result rendering
   function renderResult() {
     // Show results as a grid when all questions are answered
-    const allAnswered = questions.length > 0 && Object.values(status).filter(s => s === "pending").length === 0;
+    const allAnswered =
+      questions.length > 0 && Object.values(status).filter((s) => s === 'pending').length === 0;
 
     if (showResult) {
-      const correctCount = Object.values(status).filter((s) => s === "correct").length;
-      const failCount = Object.values(status).filter((s) => s === "fail").length;
+      const correctCount = Object.values(status).filter((s) => s === 'correct').length;
+      const failCount = Object.values(status).filter((s) => s === 'fail').length;
       const pendingCount = questions.length - (correctCount + failCount);
       const q = current !== null ? questions[current] : null;
       return (
         <div className="space-y-4 mt-8">
           {/* Show area name at top */}
           {selectedArea && (
-            <div className="text-lg font-bold text-blue-600 mb-2">
-              🎓 Área: {selectedArea.area}
-            </div>
+            <div className="text-lg font-bold text-blue-600 mb-2">🎓 Área: {selectedArea.area}</div>
           )}
           <div className="mt-2 text-base flex items-center gap-2">
             {EMOJI_PROGRESS} {questions.length}
-            <span className="ml-2">| {EMOJI_SUCCESS} {correctCount}</span>
-            <span>| {EMOJI_FAIL} {failCount}</span>
-            <span>| {EMOJI_ASK} {pendingCount}</span>
+            <span className="ml-2">
+              | {EMOJI_SUCCESS} {correctCount}
+            </span>
+            <span>
+              | {EMOJI_FAIL} {failCount}
+            </span>
+            <span>
+              | {EMOJI_ASK} {pendingCount}
+            </span>
           </div>
           {q && (
             <>
-              <div className="font-bold text-lg">{EMOJI_SECTION} {q.section}</div>
+              <div className="font-bold text-lg">
+                {EMOJI_SECTION} {q.section}
+              </div>
               <div
                 className="text-xl font-semibold rich-content"
                 dangerouslySetInnerHTML={formatRichText(`${q.number}. ${q.question}`)}
@@ -1144,39 +1312,56 @@ export default function QuizApp() {
             </>
           )}
           <div className="text-2xl">
-            {showResult.correct ? EMOJI_SUCCESS + " ¡Correcto!" : EMOJI_FAIL + " Incorrecto."}
+            {showResult.correct ? EMOJI_SUCCESS + ' ¡Correcto!' : EMOJI_FAIL + ' Incorrecto.'}
           </div>
           <div
-            className={`text-base font-semibold mt-2 rich-content ${showResult.correct ? "text-green-600" : "text-red-600"}`}
+            className={`text-base font-semibold mt-2 rich-content ${showResult.correct ? 'text-green-600' : 'text-red-600'}`}
             dangerouslySetInnerHTML={formatRichText(
-              current !== null && questions[current] 
-                ? (currentQuizType === "Multiple Choice" 
-                    ? (() => {
-                        const q = questions[current];
-                        const answerIndex = q.options?.findIndex(option => option === q.answer) ?? -1;
-                        const answerLetter = answerIndex >= 0 ? String.fromCharCode(65 + answerIndex) : '';
-                        return `Respuesta esperada ${answerLetter}) ${q.answer}`;
-                      })()
-                    : questions[current].answer
-                  )
-                : ""
+              current !== null && questions[current]
+                ? currentQuizType === 'Multiple Choice'
+                  ? (() => {
+                      const q = questions[current];
+                      const answerIndex =
+                        q.options?.findIndex((option) => option === q.answer) ?? -1;
+                      const answerLetter =
+                        answerIndex >= 0 ? String.fromCharCode(65 + answerIndex) : '';
+                      return `Respuesta esperada ${answerLetter}) ${q.answer}`;
+                    })()
+                  : questions[current].answer
+                : ''
             )}
           ></div>
-          <div className="text-base rich-content" dangerouslySetInnerHTML={formatRichText(showResult.explanation)}></div>
+          <div
+            className="text-base rich-content"
+            dangerouslySetInnerHTML={formatRichText(showResult.explanation)}
+          ></div>
           {/* appearsIn bullet list if present */}
-          {current !== null && questions[current] && Array.isArray(questions[current].appearsIn) && questions[current].appearsIn.length > 0 && (
-            <div className="mt-2">
-              <div className="font-semibold">Aparece en:</div>
-              <ul className="list-disc list-inside ml-4">
-                {questions[current].appearsIn.map((ref: string, idx: number) => (
-                  <li key={idx}>{ref}</li>
-                ))}
-              </ul>
-            </div>
-          )}
+          {current !== null &&
+            questions[current] &&
+            Array.isArray(questions[current].appearsIn) &&
+            questions[current].appearsIn.length > 0 && (
+              <div className="mt-2">
+                <div className="font-semibold">Aparece en:</div>
+                <ul className="list-disc list-inside ml-4">
+                  {questions[current].appearsIn.map((ref: string, idx: number) => (
+                    <li key={idx}>{ref}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           <div className="flex gap-4 mt-4">
-            <button className="px-4 py-2 bg-blue-600 text-white rounded" onClick={() => handleContinue("C")}>Continuar</button>
-            <button className="px-4 py-2 bg-gray-400 text-white rounded" onClick={() => handleContinue("E")}>Options</button>
+            <button
+              className="px-4 py-2 bg-blue-600 text-white rounded"
+              onClick={() => handleContinue('C')}
+            >
+              Continuar
+            </button>
+            <button
+              className="px-4 py-2 bg-gray-400 text-white rounded"
+              onClick={() => handleContinue('E')}
+            >
+              Options
+            </button>
           </div>
         </div>
       );
@@ -1184,38 +1369,49 @@ export default function QuizApp() {
 
     if (allAnswered) {
       const grouped = groupBySection(questions);
-      const correctCount = Object.values(status).filter((s) => s === "correct").length;
-      const failCount = Object.values(status).filter((s) => s === "fail").length;
+      const correctCount = Object.values(status).filter((s) => s === 'correct').length;
+      const failCount = Object.values(status).filter((s) => s === 'fail').length;
       const pendingCount = questions.length - (correctCount + failCount);
       return (
         <div className="space-y-8 mt-8">
           {/* Show area name at top */}
           {selectedArea && (
-            <div className="text-lg font-bold text-blue-600 mb-2">
-              🎓 Área: {selectedArea.area}
-            </div>
+            <div className="text-lg font-bold text-blue-600 mb-2">🎓 Área: {selectedArea.area}</div>
           )}
           <div className="text-2xl font-bold">{EMOJI_DONE} ¡Quiz completado!</div>
           <div className="mt-2 text-base flex items-center gap-2">
             {EMOJI_PROGRESS} {questions.length}
-            <span className="ml-2">{EMOJI_SUCCESS} {correctCount}</span>
-            <span>{EMOJI_FAIL} {failCount}</span>
-            <span>{EMOJI_ASK} {pendingCount}</span>
+            <span className="ml-2">
+              {EMOJI_SUCCESS} {correctCount}
+            </span>
+            <span>
+              {EMOJI_FAIL} {failCount}
+            </span>
+            <span>
+              {EMOJI_ASK} {pendingCount}
+            </span>
           </div>
           <div className="flex gap-4 mt-4">
-            <button className="px-4 py-2 bg-orange-500 text-white rounded" onClick={resetQuiz}>🔄 Volver a empezar</button>
+            <button className="px-4 py-2 bg-orange-500 text-white rounded" onClick={resetQuiz}>
+              🔄 Volver a empezar
+            </button>
           </div>
           {[...grouped.entries()].map(([section, qs]) => (
             <div key={section}>
-              <div className="font-bold text-lg mb-2">{EMOJI_SECTION} {section}</div>
+              <div className="font-bold text-lg mb-2">
+                {EMOJI_SECTION} {section}
+              </div>
               <div className="grid grid-cols-5 gap-2">
                 {qs.map((q: QuestionType) => {
                   let emoji = EMOJI_ASK;
-                  if (status[q.index] === "correct") emoji = EMOJI_SUCCESS;
-                  else if (status[q.index] === "fail") emoji = EMOJI_FAIL;
+                  if (status[q.index] === 'correct') emoji = EMOJI_SUCCESS;
+                  else if (status[q.index] === 'fail') emoji = EMOJI_FAIL;
                   return (
                     <div key={q.index} className="flex flex-col items-center">
-                      <span className="text-2xl">{q.number}{emoji}</span>
+                      <span className="text-2xl">
+                        {q.number}
+                        {emoji}
+                      </span>
                     </div>
                   );
                 })}
@@ -1228,7 +1424,9 @@ export default function QuizApp() {
             <span>{EMOJI_ASK} = Pendiente</span>
           </div>
           <div className="flex gap-4 mt-4">
-            <button className="px-4 py-2 bg-orange-500 text-white rounded" onClick={resetQuiz}>🔄 Volver a empezar</button>
+            <button className="px-4 py-2 bg-orange-500 text-white rounded" onClick={resetQuiz}>
+              🔄 Volver a empezar
+            </button>
           </div>
         </div>
       );
@@ -1242,11 +1440,12 @@ export default function QuizApp() {
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       const active = document.activeElement as HTMLElement | null;
-      const isTextInput = active && (
-        active.tagName === 'TEXTAREA' ||
-        (active.tagName === 'INPUT' && !['checkbox', 'radio'].includes((active as HTMLInputElement).type)) ||
-        active.getAttribute('contenteditable') === 'true'
-      );
+      const isTextInput =
+        active &&
+        (active.tagName === 'TEXTAREA' ||
+          (active.tagName === 'INPUT' &&
+            !['checkbox', 'radio'].includes((active as HTMLInputElement).type)) ||
+          active.getAttribute('contenteditable') === 'true');
       if (isTextInput) return;
       if (showAreaSelection) {
         // Allow number keys 1,2,3 for quick area selection
@@ -1263,9 +1462,16 @@ export default function QuizApp() {
         }
       }
       if (showSelectionMenu && !selectionMode) {
-        if (e.key.toLowerCase() === 't') { setSelectionMode('all'); startQuizAll(); }
-        if (e.key.toLowerCase() === 's') { setSelectionMode('sections'); }
-        if (e.key.toLowerCase() === 'p') { setSelectionMode('questions'); }
+        if (e.key.toLowerCase() === 't') {
+          setSelectionMode('all');
+          startQuizAll();
+        }
+        if (e.key.toLowerCase() === 's') {
+          setSelectionMode('sections');
+        }
+        if (e.key.toLowerCase() === 'p') {
+          setSelectionMode('questions');
+        }
       }
       if (showSelectionMenu && selectionMode === 'sections') {
         if (e.key === 'Enter' || e.key === 'Return' || e.key === 'NumpadEnter') {
@@ -1278,19 +1484,23 @@ export default function QuizApp() {
         }
       }
       if (!showSelectionMenu && !showStatus && !showResult && current !== null) {
-        if (currentQuizType === "True False") {
+        if (currentQuizType === 'True False') {
           if (e.key.toLowerCase() === 'v') handleAnswer('V');
           if (e.key.toLowerCase() === 'f') handleAnswer('F');
-        } else if (currentQuizType === "Multiple Choice") {
+        } else if (currentQuizType === 'Multiple Choice') {
           const letter = e.key.toLowerCase();
-          if ([
-            'a', 'b', 'c', 'd', 'e', 'f'
-          ].includes(letter)) {
+          if (['a', 'b', 'c', 'd', 'e', 'f'].includes(letter)) {
             handleAnswer(letter);
           }
           // Numeric shortcuts: 1 = A, 2 = B, ...
           const num = parseInt(e.key, 10);
-          if (!isNaN(num) && num >= 1 && current !== null && questions[current]?.options && num <= questions[current].options.length) {
+          if (
+            !isNaN(num) &&
+            num >= 1 &&
+            current !== null &&
+            questions[current]?.options &&
+            num <= questions[current].options.length
+          ) {
             const letterForNum = String.fromCharCode(96 + num); // 1->a, 2->b, ...
             handleAnswer(letterForNum);
           }
@@ -1308,29 +1518,56 @@ export default function QuizApp() {
     }
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [showAreaSelection, areas, showSelectionMenu, selectionMode, selectedSections, selectedQuestions, showStatus, showResult, current, questions, currentQuizType, shuffleQuestions, loadQuestionsForArea, handleAnswer, goToStatusWithResume, handleContinue, resetQuiz, startQuizAll, startQuizSections, startQuizQuestions, pendingQuestions]);
+  }, [
+    showAreaSelection,
+    areas,
+    showSelectionMenu,
+    selectionMode,
+    selectedSections,
+    selectedQuestions,
+    showStatus,
+    showResult,
+    current,
+    questions,
+    currentQuizType,
+    shuffleQuestions,
+    loadQuestionsForArea,
+    handleAnswer,
+    goToStatusWithResume,
+    handleContinue,
+    resetQuiz,
+    startQuizAll,
+    startQuizSections,
+    startQuizQuestions,
+    pendingQuestions,
+  ]);
 
-  const allAnswered = questions.length > 0 && Object.values(status).filter(s => s === "pending").length === 0;
+  const allAnswered =
+    questions.length > 0 && Object.values(status).filter((s) => s === 'pending').length === 0;
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-zinc-50 dark:bg-black p-4">
       <div className="w-full max-w-3xl bg-white dark:bg-zinc-900 rounded-lg shadow-lg p-8 relative">
         {showAreaSelection
           ? renderAreaSelection()
-          : (showSelectionMenu
-              ? (selectionMode === "sections"
-                  ? renderSectionSelection()
-                  : selectionMode === "questions"
-                    ? renderQuestionSelection()
-                    : renderSelectionMenu())
-              : (showResult
-                  ? renderResult()
-                  : (allAnswered
-                      ? renderResult()
-                      : showStatus
-                        ? renderStatusGrid()
-                        : renderQuestion())))}
+          : showSelectionMenu
+            ? selectionMode === 'sections'
+              ? renderSectionSelection()
+              : selectionMode === 'questions'
+                ? renderQuestionSelection()
+                : renderSelectionMenu()
+            : showResult
+              ? renderResult()
+              : allAnswered
+                ? renderResult()
+                : showStatus
+                  ? renderStatusGrid()
+                  : renderQuestion()}
         {/* Version link only on main menu (no selection in progress) */}
-        {showAreaSelection ? <VersionLink /> : (showSelectionMenu && !selectionMode ? <VersionLink /> : null)}
+        {showAreaSelection ? (
+          <VersionLink />
+        ) : showSelectionMenu && !selectionMode ? (
+          <VersionLink />
+        ) : null}
       </div>
     </div>
   );
@@ -1342,7 +1579,7 @@ function VersionLink() {
     <Link
       href="/version-history"
       className="absolute right-4 bottom-4 text-xs text-gray-500 hover:underline z-20"
-      style={{ fontSize: "0.75rem" }}
+      style={{ fontSize: '0.75rem' }}
       aria-label="Historial de versiones"
     >
       v{packageJson.version}

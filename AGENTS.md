@@ -3,6 +3,7 @@
 This is a **small public TypeScript project**. AI agents are welcome, but must follow these rules.
 
 ## 0) Golden rules
+
 1. **TDD first**: when fixing/adding behavior, start by writing/updating a failing test (Jest or Playwright), then implement.
 2. **Commit the failing test first (RED commit)**: the first commit in a change should add a test that fails on `main` (red). Follow up with implementation that makes it pass (green).
 3. **Small diffs**: keep changes minimal and localized. Avoid sweeping refactors.
@@ -13,6 +14,7 @@ This is a **small public TypeScript project**. AI agents are welcome, but must f
 ---
 
 ## 1) Repository overview
+
 **Purpose:** A web application for taking quizzes/tests on various subjects. Must be usable on the phone.  
 **Language:** TypeScript  
 **Tests:** Jest (unit), Playwright (e2e)  
@@ -20,6 +22,7 @@ This is a **small public TypeScript project**. AI agents are welcome, but must f
 **Deploy:** Static assets to **AWS S3**. Site/app served via **Vercel** (as applicable for this repo).
 
 ### Key folders (adjust to match repo)
+
 - `src/` — application/library code
 - `tests/unit/` — Jest tests
 - `tests/e2e/` — Playwright tests
@@ -28,6 +31,7 @@ This is a **small public TypeScript project**. AI agents are welcome, but must f
 - `scripts/` — helper scripts (build/deploy)
 
 ### Invariants / constraints
+
 - Keep the project **dependency-light** (small repo).
 - Maintain **fast test runs**; avoid slow e2e unless necessary.
 - The repo must remain **public-safe** (no secrets, no private data, no proprietary code).
@@ -35,7 +39,9 @@ This is a **small public TypeScript project**. AI agents are welcome, but must f
 ---
 
 ## 2) How to work in this repo
+
 ### Preferred workflow (TDD)
+
 1. Identify the smallest slice of behavior to change.
 2. Add a **failing** test:
    - Jest for logic/components
@@ -48,6 +54,7 @@ This is a **small public TypeScript project**. AI agents are welcome, but must f
 8. Update docs if behavior or developer workflow changed.
 
 ### What to avoid
+
 - Reformat-only commits
 - Renaming/moving many files
 - Large refactors “for cleanliness”
@@ -56,29 +63,35 @@ This is a **small public TypeScript project**. AI agents are welcome, but must f
 ---
 
 ## 3) Setup / build / test commands
+
 > Keep commands current with `package.json`. Prefer `npm ci` in CI.
 
 ### Install
+
 ```bash
 npm ci
 ```
 
 ### Run locally
+
 ```bash
 npm run dev
 ```
 
 ### Unit tests (Jest)
+
 ```bash
 npm run test:unit
 ```
 
 ### E2E tests (Playwright, all tests)
+
 ```bash
 npm run test:e2e
 ```
 
 ### E2E one test (Playwright, focused)
+
 ```bash
 npx playwright test -g "test name" --reporter=list
 ```
@@ -86,11 +99,13 @@ npx playwright test -g "test name" --reporter=list
 **Note:** Always use `--reporter=list` for Playwright tests. This provides clear output and makes it easier to cancel with Ctrl+C if a test hangs. Use `--project=chromium` for faster feedback during development.
 
 Example:
+
 ```bash
 npx playwright test tests/e2e/area-switching.spec.ts --project=chromium --reporter=list
 ```
 
 ### Build
+
 ```bash
 npm run build
 ```
@@ -98,17 +113,20 @@ npm run build
 ---
 
 ## 4) Coding standards (TypeScript)
+
 - Follow existing TS config and lint rules.
 - Prefer **explicit types** at module boundaries; avoid over-typing internals.
 - Avoid `any` unless unavoidable; prefer `unknown` + narrowing.
 - Keep functions small and pure when possible.
 
 ### Error handling
+
 - Provide actionable error messages.
 - Preserve context (`cause` when available).
 - Don’t swallow errors silently.
 
 ### Logging
+
 - Keep logs minimal.
 - Never log secrets or tokens.
 - Prefer existing logging utilities (if present).
@@ -117,13 +135,16 @@ npm run build
 ---
 
 ## 5) Testing rules (TDD)
+
 ### Core process (required)
+
 - For any bugfix/feature, use **2 commits**:
-  1) **RED commit**: add a failing test only (no implementation changes)
-  2) **GREEN commit**: implementation to make it pass
+  1. **RED commit**: add a failing test only (no implementation changes)
+  2. **GREEN commit**: implementation to make it pass
 - If the failing test cannot be committed (e.g. test requires unavailable infrastructure or is unavoidably flaky), explain why clearly in the PR.
 
 ### Test scripts: unit and E2E
+
 - `npm test` runs both Jest unit tests and Playwright E2E tests (sequentially).
 - `npm run test:unit` runs only Jest unit tests.
 - `npm run test:e2e` runs only Playwright E2E tests.
@@ -134,10 +155,12 @@ npm run build
 - This setup allows you to run all or just one type of test as needed.
 
 ### Jest (unit/integration)
+
 - Use Jest for deterministic logic and fast feedback.
 - For bugfixes: add a regression test that fails before the fix.
 
 ### Playwright (e2e)
+
 - Use Playwright only for true end-to-end behavior.
 - Avoid flaky tests:
   - Use stable selectors (e.g., `data-testid` if the repo uses it).
@@ -159,6 +182,7 @@ npm run build
 ---
 
 ## 6) Security + public repo hygiene
+
 - Never add `.env` with real values.
 - Never hardcode AWS keys, Vercel tokens, webhook secrets, etc.
 - Any example config must use placeholders:
@@ -168,7 +192,9 @@ npm run build
 ---
 
 ## 7) Dependency policy (small project)
+
 Before adding a dependency:
+
 1. Check if it already exists.
 2. Prefer standard library or existing utilities.
 3. Justify why it’s necessary (size, maintenance, security).
@@ -177,24 +203,30 @@ Before adding a dependency:
 ---
 
 ## 8) Deployment notes (S3 + Vercel)
+
 ### S3 (static deploy)
+
 - Build output is in `out/`.
 - Deployment should upload built assets to an S3 bucket.
 - Never modify deploy workflows without an explicit request.
 
 ### Vercel
+
 - Vercel deployment should be reproducible via GitHub integration.
 - Avoid environment-variable changes in code; document them instead.
 
 ---
 
 ## 9) GitHub workflow expectations
+
 - Assume CI runs: lint, typecheck, Jest, and (optionally) Playwright.
 - Keep PRs small and reviewable.
 - If CI fails, fix the root cause rather than weakening checks.
 
 ### Commit message style (Conventional Commits)
+
 We follow [Conventional Commits](https://www.conventionalcommits.org/) for all commit messages:
+
 - Prefix each commit with a type and a short description.
 - Examples:
   - `feat: add keyboard shortcuts for MCQ answers`
@@ -205,22 +237,26 @@ We follow [Conventional Commits](https://www.conventionalcommits.org/) for all c
   - `chore: update dependencies`
 
 ### CHANGELOG.md usage
+
 - We maintain a `CHANGELOG.md` at the root of the project.
 - For every pull request, add an entry under an "Unreleased" section describing the change.
 - When a release is made, move all "Unreleased" entries under the new version heading with the release date.
 - Example structure:
+
   ```markdown
   ## [Unreleased]
+
   - feat: add keyboard shortcuts for MCQ answers
   - fix: sequential order always starts at first question
 
   ## [1.4.0] - 2026-01-17
+
   - feat: add appearsIn field to questions
   - fix: prevent cross-area localStorage contamination
   ```
 
-
 ### PR description should include
+
 - What changed (1–3 bullets)
 - Why it changed
 - How to test locally
@@ -233,13 +269,16 @@ We follow [Conventional Commits](https://www.conventionalcommits.org/) for all c
 ## 10) Git workflow and pull requests
 
 ### Creating a feature branch
+
 - Before starting work, create a branch from `main`:
   ```bash
   git checkout -b feature/short-description
   ```
 
 ### Pull request process
+
 1. **Push your feature branch to GitHub:**
+
    ```bash
    git push -u origin feature/short-description
    ```
@@ -264,6 +303,7 @@ We follow [Conventional Commits](https://www.conventionalcommits.org/) for all c
    ```
 
 ### Working with commits
+
 - Keep commits focused and atomic.
 - Use the TDD RED-GREEN cycle: commit failing tests separately, then commit implementation.
 - Write clear commit messages following Conventional Commits format.
@@ -271,7 +311,9 @@ We follow [Conventional Commits](https://www.conventionalcommits.org/) for all c
 ---
 
 ## 11) Agent output format (what to include in responses)
+
 When you propose or implement changes, include:
+
 1. **Plan** (short, TDD-oriented)
 2. **Tests added/updated** (Jest/Playwright)
 3. **Code changes** (high level)
@@ -282,14 +324,17 @@ When you propose or implement changes, include:
 ---
 
 ## 12) Allowed / disallowed actions
+
 ### Allowed
+
 ✅ Add/adjust Jest tests  
 ✅ Add/adjust Playwright tests (focused, non-flaky)  
 ✅ Fix bugs with minimal diffs  
 ✅ Improve clarity in touched code  
-✅ Update docs for changed behavior/commands  
+✅ Update docs for changed behavior/commands
 
 ### Disallowed unless explicitly asked
+
 ❌ Re-architecting the project  
 ❌ Replacing Jest/Playwright/tooling  
 ❌ Large-scale refactors or renames  

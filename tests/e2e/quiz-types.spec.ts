@@ -14,7 +14,9 @@ test('True/False quiz works for Lógica I area', async ({ page }) => {
   await expect(page.getByText(/📊\s*\d+\s*\|\s*✅\s*\d+/)).toBeVisible();
 });
 
-test('Multiple Choice quiz shows question text with A/B/C buttons (consistent with True/False)', async ({ page }) => {
+test('Multiple Choice quiz shows question text with A/B/C buttons (consistent with True/False)', async ({
+  page,
+}) => {
   await page.getByRole('button', { name: /Introducción al Pensamiento Científico/ }).click();
   await page.getByRole('button', { name: 'Todas las preguntas' }).click();
   await expect(page.getByRole('button', { name: 'A', exact: true })).toBeVisible();

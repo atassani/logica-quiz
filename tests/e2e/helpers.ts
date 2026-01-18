@@ -17,10 +17,10 @@ export async function setupFreshTest(page: Page) {
 export async function waitForAppReady(page: Page) {
   // Wait for the page to be fully loaded
   await page.waitForLoadState('networkidle');
-  
+
   // Wait for the main app container to be visible
   await expect(page.locator('body')).toBeVisible();
-  
+
   // Wait a moment for any JavaScript initialization
   await page.waitForTimeout(500);
 }
@@ -31,14 +31,14 @@ export async function waitForAppReady(page: Page) {
  */
 export async function waitForQuizReady(page: Page) {
   await waitForAppReady(page);
-  
+
   // Wait for either area selection or quiz interface to appear
   await expect(
-    page.getByText('¿Qué quieres estudiar?').or(
-      page.getByText('¿Cómo quieres las preguntas?')
-    ).or(
-      page.locator('.question-text')
-    ).first() // Take the first match to avoid strict mode violations
+    page
+      .getByText('¿Qué quieres estudiar?')
+      .or(page.getByText('¿Cómo quieres las preguntas?'))
+      .or(page.locator('.question-text'))
+      .first() // Take the first match to avoid strict mode violations
   ).toBeVisible();
 }
 
@@ -46,11 +46,15 @@ export async function waitForQuizReady(page: Page) {
  * Navigate to a study area and start quiz.
  * Encapsulates the common pattern used across many tests.
  */
-export async function startQuiz(page: Page, areaName: string, quizType: 'Todas las preguntas' | 'Seleccionar secciones' = 'Todas las preguntas') {
+export async function startQuiz(
+  page: Page,
+  areaName: string,
+  quizType: 'Todas las preguntas' | 'Seleccionar secciones' = 'Todas las preguntas'
+) {
   await waitForAppReady(page);
-  
+
   await page.getByRole('button', { name: new RegExp(areaName) }).click();
   await page.getByRole('button', { name: quizType }).click();
-  
+
   await waitForQuizReady(page);
 }

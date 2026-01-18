@@ -3,13 +3,14 @@
 Aplicación que muestra tests de asignaturas de Filosofía de la UNED en formato web.
 
 Se han incluido tests de:
+
 - Lógica I (2025). Verdadero-Falso.
 - Introducción al Pensamiento Científico (2025). Opción múltiple.
 - Filosofía del Lenguaje (2025). Opción múltiple.
-  
+
 ## Aplicación Web
 
-Se trata de una aplicación "vibe coded" que usa [Next.js](https://nextjs.org) con  [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Se trata de una aplicación "vibe coded" que usa [Next.js](https://nextjs.org) con [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 Los resultados se almacenan en el `LocalStorage` del navegador y se recuperan al iniciar la aplicación.
 
@@ -38,8 +39,8 @@ Asegúrate de que tu archivo `next.config.js` contiene:
 ```js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    output: 'export',
-    // ...otras opciones de configuración
+  output: 'export',
+  // ...otras opciones de configuración
 };
 module.exports = nextConfig;
 ```
@@ -72,7 +73,7 @@ NEXT_PUBLIC_BASE_PATH=/uned/studio
 - Cambia el valor según la subcarpeta donde se sirva la app.
 - Esta variable se usa tanto en la configuración de Next.js (`next.config.ts`) como en el código de la aplicación para rutas de recursos (por ejemplo, favicon).
 - Si despliegas en la raíz, puedes dejarla vacía:
-  
+
   ```bash
   NEXT_PUBLIC_BASE_PATH=
   ```
@@ -81,25 +82,26 @@ NEXT_PUBLIC_BASE_PATH=/uned/studio
 
 Inside that directory, you can run several commands:
 
-- `npx playwright test` 
-	- Runs the end-to-end tests.
+- `npx playwright test`
+  - Runs the end-to-end tests.
 - `npx playwright test --ui`
   - Starts the interactive UI mode.
 - `npx playwright test --project=chromium`
-	- Runs the tests only on Desktop Chrome.
+  - Runs the tests only on Desktop Chrome.
 - `npx playwright test example`
-    - Runs the tests in a specific file.
+  - Runs the tests in a specific file.
 - `npx playwright test --debug`
-	- Runs the tests in debug mode.
+  - Runs the tests in debug mode.
 - `npx playwright codegen`
 - `npx playwright codegen http://localhost:3000/es/logica1`
-    - Auto generate tests with Codegen.
+  - Auto generate tests with Codegen.
 
 We suggest that you begin by typing:
 
 `npx playwright test`
 
 And check out the following files:
+
 - `./tests/example.spec.ts` - Example end-to-end test
 - `./playwright.config.ts` - Playwright Test configuration
 
@@ -121,6 +123,7 @@ Cuando una pregunta tiene el campo `appearsIn`, la aplicación muestra una lista
 ## Validación automática
 
 Existe un test unitario (`tests/unit/appears-in-field.test.ts`) que garantiza que:
+
 - Solo las preguntas de `questions-ipc.json` pueden tener el campo `appearsIn`.
 - Todos los valores de `appearsIn` son nombres de sección o examen válidos presentes en el archivo.
 

@@ -33,7 +33,7 @@ test('Multiple Choice quiz works for IPC area', async ({ page }) => {
 
 test('keyboard shortcuts work for Multiple Choice questions', async ({ page }) => {
   await startQuiz(page, 'Introducción al Pensamiento Científico');
-  
+
   // Press 'a' to answer with option A
   await page.keyboard.press('a');
   await expect(page.getByRole('button', { name: 'Continuar' })).toBeVisible();
