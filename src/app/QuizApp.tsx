@@ -681,45 +681,46 @@ export default function QuizApp() {
           <div className="text-lg font-bold text-blue-600 mb-2">🎓 Área: {selectedArea.area}</div>
         )}
         <div className="text-2xl font-bold mb-4">¿Cómo quieres las preguntas?</div>
-        {/* Question Order Selection */}
-        {/* Orden de preguntas */}
-        <div className="flex flex-col items-center space-y-2 mb-2">
-          <div className="text-lg font-semibold mb-2">Orden de preguntas:</div>
-          <div className="flex items-center justify-center w-64">
-            <span
-              className={`text-sm font-medium mr-3 cursor-pointer ${shuffleQuestions ? 'text-blue-600' : 'text-gray-500'}`}
-              onClick={() => setShuffleQuestions(true)}
-              tabIndex={0}
-              role="button"
-              aria-label="Orden aleatorio"
-            >
-              Aleatorio
-            </span>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={!shuffleQuestions}
-                onChange={(e) => setShuffleQuestions(!e.target.checked)}
-                className="sr-only peer"
-                aria-label="Alternar orden de preguntas"
-              />
-              <div className="w-14 h-8 bg-gray-200 rounded-full peer peer-focus:ring-2 peer-focus:ring-blue-500 transition-all duration-300">
-                <div
-                  className={`absolute left-0 top-0 h-8 w-8 rounded-full bg-blue-600 transition-transform duration-300 ${!shuffleQuestions ? 'translate-x-6' : ''}`}
-                ></div>
-              </div>
-            </label>
-            <span
-              className={`text-sm font-medium ml-3 cursor-pointer ${!shuffleQuestions ? 'text-blue-600' : 'text-gray-500'}`}
-              onClick={() => setShuffleQuestions(false)}
-              tabIndex={0}
-              role="button"
-              aria-label="Orden secuencial"
-            >
-              Secuencial
-            </span>
+        {/* Question Order Selection: Only for Multiple Choice */}
+        {currentQuizType === 'Multiple Choice' && (
+          <div className="flex flex-col items-center space-y-2 mb-2">
+            <div className="text-lg font-semibold mb-2">Orden de preguntas:</div>
+            <div className="flex items-center justify-center w-64">
+              <span
+                className={`text-sm font-medium mr-3 cursor-pointer ${shuffleQuestions ? 'text-blue-600' : 'text-gray-500'}`}
+                onClick={() => setShuffleQuestions(true)}
+                tabIndex={0}
+                role="button"
+                aria-label="Orden aleatorio"
+              >
+                Aleatorio
+              </span>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={!shuffleQuestions}
+                  onChange={(e) => setShuffleQuestions(!e.target.checked)}
+                  className="sr-only peer"
+                  aria-label="Alternar orden de preguntas"
+                />
+                <div className="w-14 h-8 bg-gray-200 rounded-full peer peer-focus:ring-2 peer-focus:ring-blue-500 transition-all duration-300">
+                  <div
+                    className={`absolute left-0 top-0 h-8 w-8 rounded-full bg-blue-600 transition-transform duration-300 ${!shuffleQuestions ? 'translate-x-6' : ''}`}
+                  ></div>
+                </div>
+              </label>
+              <span
+                className={`text-sm font-medium ml-3 cursor-pointer ${!shuffleQuestions ? 'text-blue-600' : 'text-gray-500'}`}
+                onClick={() => setShuffleQuestions(false)}
+                tabIndex={0}
+                role="button"
+                aria-label="Orden secuencial"
+              >
+                Secuencial
+              </span>
+            </div>
           </div>
-        </div>
+        )}
         {/* Orden de respuestas */}
         <div className="flex flex-col items-center space-y-2 mb-4">
           <div className="text-lg font-semibold mb-2">Orden de respuestas:</div>
@@ -1185,17 +1186,6 @@ export default function QuizApp() {
           className="text-xl font-semibold rich-content question-text"
           dangerouslySetInnerHTML={formatRichText(`${q.number}. ${q.question}`)}
         ></div>
-        {/* appearsIn bullet list if present */}
-        {Array.isArray(q.appearsIn) && q.appearsIn.length > 0 && (
-          <div className="mt-2">
-            <div className="font-semibold">Aparece en:</div>
-            <ul className="list-disc list-inside ml-4">
-              {q.appearsIn.map((ref: string, idx: number) => (
-                <li key={idx}>{ref}</li>
-              ))}
-            </ul>
-          </div>
-        )}
         {currentQuizType === 'Multiple Choice' && Array.isArray(q.options) && (
           <div className="mt-4 space-y-2">
             {(() => {
@@ -1212,6 +1202,17 @@ export default function QuizApp() {
                 );
               });
             })()}
+            {/* appearsIn bullet list if present */}
+            {Array.isArray(q.appearsIn) && q.appearsIn.length > 0 && (
+              <div className="mt-2">
+                <div className="text-sm text-gray-500">Aparece en:</div>
+                <ul className="list-disc list-inside ml-4 text-sm text-gray-500">
+                  {q.appearsIn.map((ref: string, idx: number) => (
+                    <li key={idx}>{ref}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         )}
 
@@ -1341,8 +1342,8 @@ export default function QuizApp() {
             Array.isArray(questions[current].appearsIn) &&
             questions[current].appearsIn.length > 0 && (
               <div className="mt-2">
-                <div className="font-semibold">Aparece en:</div>
-                <ul className="list-disc list-inside ml-4">
+                <div className="text-sm text-gray-500">Aparece en:</div>
+                <ul className="list-disc list-inside ml-4 text-sm text-gray-500">
                   {questions[current].appearsIn.map((ref: string, idx: number) => (
                     <li key={idx}>{ref}</li>
                   ))}
