@@ -5,14 +5,14 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('Test area switching preserves progress', async ({ page }) => {
-    await page.getByRole('button', { name: 'Estudiar Lógica I' }).waitFor({ timeout: 15000 });
-    await page.getByRole('button', { name: 'Estudiar Lógica I' }).click({ timeout: 10000 });
+  await page.getByRole('button', { name: 'Estudiar Lógica I' }).waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Estudiar Lógica I' }).click({ timeout: 10000 });
   await page.getByRole('button', { name: 'Todas las preguntas' }).waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Todas las preguntas' }).click({ timeout: 10000 });
-  
+
   // Wait for quiz to load completely
   await page.waitForLoadState('networkidle');
-  
+
   // Wait for V button to be available
   await page.getByRole('button', { name: 'V', exact: true }).waitFor({ timeout: 20000 });
   await page.getByRole('button', { name: 'V', exact: true }).click({ timeout: 10000 });
@@ -56,4 +56,3 @@ test('Test area switching preserves progress', async ({ page }) => {
   const pendientesAfter = pendientesMatchAfter ? parseInt(pendientesMatchAfter[1], 10) : null;
   expect(pendientesAfter).toBe(pendientesBefore);
 }, 40000);
-

@@ -1,8 +1,7 @@
+'use client';
 
-"use client";
-
-import QuizApp from "./QuizApp";
-import Link from "next/link";
+import QuizApp from './QuizApp';
+import Link from 'next/link';
 import packageJson from '../../package.json';
 
 export default function Home() {

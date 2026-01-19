@@ -7,7 +7,9 @@ test.beforeEach(async ({ page }) => {
 test('shows area selection screen first', async ({ page }) => {
   await expect(page.getByText('¿Qué quieres estudiar?')).toBeVisible();
   await expect(page.getByRole('button', { name: /Lógica I/ })).toBeVisible();
-  await expect(page.getByRole('button', { name: /Introducción al Pensamiento Científico/ })).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: /Introducción al Pensamiento Científico/ })
+  ).toBeVisible();
 });
 
 test('can select an area and proceed to question selection', async ({ page }) => {

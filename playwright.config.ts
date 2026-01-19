@@ -45,7 +45,7 @@ export default defineConfig({
     url: baseUrl.replace(/\/$/, ''),
     reuseExistingServer: true, // Always reuse existing server to avoid port conflicts
     timeout: 120000, // Increase timeout for server startup
-   },
+  },
   projects: [
     {
       name: 'chromium',

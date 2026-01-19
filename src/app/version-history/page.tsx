@@ -1,1 +1,1 @@
-export { default } from "./../version-history";
+export { default } from './../version-history';

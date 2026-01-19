@@ -1,5 +1,3 @@
-
-
 import fs from 'fs';
 import path from 'path';
 
@@ -14,7 +12,7 @@ describe('All question files appearsIn field', () => {
     if (!fs.existsSync(filePath)) return;
     const questions: Array<any> = JSON.parse(fs.readFileSync(filePath, 'utf8'));
     const validSections = new Set<string>();
-    questions.forEach(q => {
+    questions.forEach((q) => {
       if (q.section) validSections.add(q.section);
     });
 
@@ -37,10 +35,10 @@ describe('All question files explanations', () => {
     if (!fs.existsSync(filePath)) return;
     const questions: Array<any> = JSON.parse(fs.readFileSync(filePath, 'utf8'));
     it(`${file}: should fail if any explanation contains a literal section name from the file (regression)`, () => {
-      const sectionNames = Array.from(new Set(questions.map(q => q.section).filter(Boolean)));
-      const found = questions.filter(q => {
+      const sectionNames = Array.from(new Set(questions.map((q) => q.section).filter(Boolean)));
+      const found = questions.filter((q) => {
         if (typeof q.explanation !== 'string' || !q.explanation.trim()) return false;
-        return sectionNames.some(section => section && q.explanation.includes(section));
+        return sectionNames.some((section) => section && q.explanation.includes(section));
       });
       expect(found.length).toBe(0);
     });
