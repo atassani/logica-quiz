@@ -35,6 +35,14 @@ function groupBySection(questions: QuestionType[]): Map<string, QuestionType[]> 
     if (!map.has(q.section)) map.set(q.section, []);
     map.get(q.section)!.push(q);
   }
+
+  // Sort questions within each section by their number
+  for (const [section, qs] of map.entries()) {
+    map.set(
+      section,
+      qs.sort((a, b) => a.number - b.number)
+    );
+  }
   return map;
 }
 
@@ -51,7 +59,6 @@ function formatRichText(text?: string): { __html: string } {
 export default function QuizApp() {
   const canResumeRef = useRef(false);
   const [allQuestions, setAllQuestions] = useState<QuestionType[]>([]); // All loaded questions
-
   const [questions, setQuestions] = useState<QuestionType[]>([]); // Filtered questions for this session
   const [status, setStatus] = useState<Record<number, 'correct' | 'fail' | 'pending'>>({});
   // 'current' is the index in the filtered 'questions' array
@@ -85,6 +92,28 @@ export default function QuizApp() {
   const [shuffleQuestions, setShuffleQuestions] = useState<boolean>(true); // true = random, false = sequential
   // Shuffle answers toggle state
   const [shuffleAnswers, setShuffleAnswers] = useState<boolean>(false);
+
+  // Compute displayOptions for MCQ at the top level, using useMemo at the component level
+  const displayOptions = useMemo(() => {
+    if (
+      current !== null &&
+      currentQuizType === 'Multiple Choice' &&
+      questions[current] &&
+      Array.isArray(questions[current].options)
+    ) {
+      if (shuffleAnswers) {
+        // Fisher-Yates shuffle for stable randomization
+        const arr = [...questions[current].options];
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      }
+      return questions[current].options;
+    }
+    return [];
+  }, [current, currentQuizType, questions, shuffleAnswers]);
 
   // Persist current question index per area (must be after selectedArea is defined)
 
@@ -170,9 +199,7 @@ export default function QuizApp() {
           });
           localStorage.removeItem('quizStatus');
         }
-        // Always show area selection after reload for test compatibility
-        setShowAreaSelection(true);
-        // Auto-restore last studied area (by shortName)
+        // Only show area selection if no area is selected
         const currentAreaShortName = localStorage.getItem('currentArea');
         if (currentAreaShortName) {
           const areaToRestore = areasData.find((area) => area.shortName === currentAreaShortName);
@@ -197,10 +224,11 @@ export default function QuizApp() {
             } else {
               setShuffleAnswers(false);
             }
-            // Do not hide area selection here; let user/test choose area
+            setShowAreaSelection(false);
             return;
           }
         }
+        setShowAreaSelection(true);
       })
       .catch((err) => console.error('Failed to load areas:', err));
   }, []);
@@ -263,12 +291,13 @@ export default function QuizApp() {
         orderedQuestions.sort((a, b) => a.number - b.number);
       } else {
         // Replace Math.random() with Fisher-Yates shuffle for stable randomization
-        function fisherYatesShuffle(array: any[]) {
-          for (let i = array.length - 1; i > 0; i--) {
+        function fisherYatesShuffle<T>(array: T[]): T[] {
+          const shuffled = [...array];
+          for (let i = shuffled.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
           }
-          return array;
+          return shuffled;
         }
 
         // Use Fisher-Yates shuffle for random order
@@ -485,7 +514,15 @@ export default function QuizApp() {
     if (!shuffleQuestions) {
       return [...questions].sort((a, b) => a.number - b.number);
     }
-    return [...questions];
+    // Use Fisher-Yates shuffle for random order
+    const fisherYatesShuffle = (array: any[]) => {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    };
+    return fisherYatesShuffle([...questions]);
   }
 
   const startQuizAll = useCallback(() => {
@@ -913,6 +950,8 @@ export default function QuizApp() {
                           else newSet.delete(q.index);
                           setSelectedQuestions(newSet);
                         }}
+                        className="form-checkbox h-5 w-5 text-blue-600"
+                        aria-label={`Seleccionar pregunta ${q.number}`}
                       />
                     </label>
                   ))}
@@ -1171,6 +1210,7 @@ export default function QuizApp() {
     const correctCount = Object.values(status).filter((s) => s === 'correct').length;
     const failCount = Object.values(status).filter((s) => s === 'fail').length;
     const pendingCount = questions.length - (correctCount + failCount);
+
     return (
       <div className="space-y-6">
         {/* Show area name at top */}
@@ -1200,23 +1240,14 @@ export default function QuizApp() {
         ></div>
         {currentQuizType === 'Multiple Choice' && Array.isArray(q.options) && (
           <div className="mt-4 space-y-2">
-            {(() => {
-              // Shuffle options if shuffleAnswers is true, but use a stable shuffle
-              const displayOptions = shuffleAnswers
-                ? useMemo(
-                    () => [...(q.options || [])].sort(() => Math.random() - 0.5),
-                    [q.options, shuffleAnswers]
-                  )
-                : q.options;
-              return displayOptions.map((option: string, index: number) => {
-                const letter = String.fromCharCode(65 + index); // 'A', 'B', 'C', etc.
-                return (
-                  <div key={index} className="text-base">
-                    <span className="font-bold">{letter})</span> {option}
-                  </div>
-                );
-              });
-            })()}
+            {(displayOptions || []).map((option: string, index: number) => {
+              const letter = String.fromCharCode(65 + index); // 'A', 'B', 'C', etc.
+              return (
+                <div key={index} className="text-base">
+                  <span className="font-bold">{letter})</span> {option}
+                </div>
+              );
+            })}
             {/* appearsIn bullet list if present */}
             {Array.isArray(q.appearsIn) && q.appearsIn.length > 0 && (
               <div className="mt-2">
@@ -1256,28 +1287,18 @@ export default function QuizApp() {
         ) : (
           // Multiple Choice A/B/C buttons
           <div className="flex gap-4 mt-4">
-            {(() => {
-              if (!Array.isArray(q.options)) return null;
-              // Shuffle options if shuffleAnswers is true, but use a stable shuffle
-              const displayOptions = shuffleAnswers
-                ? useMemo(
-                    () => [...(q.options || [])].sort(() => Math.random() - 0.5),
-                    [q.options, shuffleAnswers]
-                  )
-                : q.options;
-              return displayOptions.map((option: string, index: number) => {
-                const letter = String.fromCharCode(65 + index); // 'A', 'B', 'C', etc.
-                return (
-                  <button
-                    key={index}
-                    className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-lg"
-                    onClick={() => handleAnswer(letter.toLowerCase())}
-                  >
-                    {letter}
-                  </button>
-                );
-              });
-            })()}
+            {(displayOptions || []).map((option: string, index: number) => {
+              const letter = String.fromCharCode(65 + index); // 'A', 'B', 'C', etc.
+              return (
+                <button
+                  key={index}
+                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-lg"
+                  onClick={() => handleAnswer(letter.toLowerCase())}
+                >
+                  {letter}
+                </button>
+              );
+            })}
             <button
               className="px-6 py-2 bg-gray-400 text-white rounded text-lg"
               onClick={goToStatusWithResume}
@@ -1325,7 +1346,7 @@ export default function QuizApp() {
                 {EMOJI_SECTION} {q.section}
               </div>
               <div
-                className="text-xl font-semibold rich-content"
+                className="text-xl font-semibold rich-content question-text"
                 dangerouslySetInnerHTML={formatRichText(`${q.number}. ${q.question}`)}
               ></div>
             </>
@@ -1402,9 +1423,6 @@ export default function QuizApp() {
             {EMOJI_PROGRESS} {questions.length}
             <span className="ml-2">
               {EMOJI_SUCCESS} {correctCount}
-            </span>
-            <span>
-              {EMOJI_FAIL} {failCount}
             </span>
             <span>
               {EMOJI_ASK} {pendingCount}
@@ -1563,24 +1581,35 @@ export default function QuizApp() {
 
   const allAnswered =
     questions.length > 0 && Object.values(status).filter((s) => s === 'pending').length === 0;
+  const renderContent = () => {
+    if (showAreaSelection) {
+      return renderAreaSelection();
+    }
+    if (showSelectionMenu) {
+      if (selectionMode === 'sections') {
+        return renderSectionSelection();
+      }
+      if (selectionMode === 'questions') {
+        return renderQuestionSelection();
+      }
+      return renderSelectionMenu();
+    }
+    if (showResult) {
+      return renderResult();
+    }
+    if (allAnswered) {
+      return renderResult();
+    }
+    if (showStatus) {
+      return renderStatusGrid();
+    }
+    return renderQuestion();
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-zinc-50 dark:bg-black p-4">
       <div className="w-full max-w-3xl bg-white dark:bg-zinc-900 rounded-lg shadow-lg p-8 relative">
-        {showAreaSelection
-          ? renderAreaSelection()
-          : showSelectionMenu
-            ? selectionMode === 'sections'
-              ? renderSectionSelection()
-              : selectionMode === 'questions'
-                ? renderQuestionSelection()
-                : renderSelectionMenu()
-            : showResult
-              ? renderResult()
-              : allAnswered
-                ? renderResult()
-                : showStatus
-                  ? renderStatusGrid()
-                  : renderQuestion()}
+        {renderContent()}
         {/* Version link only on main menu (no selection in progress) */}
         {showAreaSelection ? (
           <VersionLink />

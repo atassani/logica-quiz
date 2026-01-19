@@ -232,7 +232,7 @@ test('selects one section and starts quiz in Lógica I area', async ({ page }) =
   await expect(page.locator('body')).toContainText(' 55| ✅ 0| ❌ 0| ❓ 55');
 
   await page.getByRole('button', { name: 'Options' }).click({ timeout: 15000 });
-  await page.getByText('📚 CUESTIONES DE LOS APUNTES1').click({ timeout: 15000 });
+  await page.getByText('📚 CUESTIONES DE LOS APUNTES').click({ timeout: 15000 });
   await expect(page.locator('body')).toContainText(
     '📚 CUESTIONES DE LOS APUNTES1❓2❓3❓4❓5❓6❓7❓8❓9❓10❓11❓12❓13❓14❓15❓16❓17❓18❓19❓20❓21❓22❓23❓24❓25❓26❓27❓28❓29❓30❓31❓32❓33❓34❓35❓36❓37❓38❓39❓40❓41❓42❓43❓44❓45❓46❓47❓48❓49❓50❓51❓52❓53❓54❓55❓'
   );
@@ -283,10 +283,12 @@ test('MCQ shows expected answer in correct format when wrong answer is selected'
   } else {
     // If A was correct, try B
     await page.getByRole('button', { name: 'Continuar' }).click();
-    await page.getByRole('button', { name: 'B', exact: true }).click();
 
-    // Wait for question text again to ensure UI is ready
-    await expect(page.locator('.question-text')).toBeVisible({ timeout: 5000 });
+    // Wait for next question to load - buttons are more reliable than question text
+    await expect(page.getByRole('button', { name: 'B', exact: true })).toBeVisible({
+      timeout: 5000,
+    });
+    await page.getByRole('button', { name: 'B', exact: true }).click();
 
     const isIncorrectB = await page.getByText('❌ Incorrecto.').isVisible();
 
@@ -452,6 +454,7 @@ test('preserves quiz progress when switching between areas', async ({ page }) =>
   // Start Lógica I quiz and answer a question
   await page.getByRole('button', { name: /Lógica I/ }).click({ timeout: 10000 });
   await expect(page.getByText('🎓 Área: Lógica I')).toBeVisible({ timeout: 5000 });
+  await page.getByRole('button', { name: 'Orden secuencial' }).click();
   await page.getByRole('button', { name: 'Todas las preguntas' }).click({ timeout: 10000 });
 
   // Wait for quiz to load with network idle first

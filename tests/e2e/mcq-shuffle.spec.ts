@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
-import { setupFreshTest, waitForQuizReady, waitForAppReady } from './helpers';
+import { setupSuperFreshTest, waitForQuizReady, waitForAppReady } from './helpers';
 
 test.describe('MCQ shuffle option', () => {
   test('should randomize answer order when shuffle is enabled', async ({ page }) => {
-    await setupFreshTest(page);
+    await setupSuperFreshTest(page);
     await waitForAppReady(page);
     // Enable shuffle (assume a toggle exists)
     await page.getByRole('button', { name: /MCQ/i }).click();
@@ -29,7 +29,7 @@ test.describe('MCQ shuffle option', () => {
   });
 
   test('should keep answer order fixed when shuffle is disabled', async ({ page }) => {
-    await setupFreshTest(page);
+    await setupSuperFreshTest(page);
     await waitForAppReady(page);
     await page.getByRole('button', { name: /MCQ/i }).click();
     await page.getByRole('button', { name: 'Orden secuencial' }).click();
