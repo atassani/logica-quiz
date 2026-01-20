@@ -121,6 +121,7 @@ Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issu
 - **Reported:** 2025-01-20
 - **Completed:** 2026-01-20
 - **Reporter:** TT
+- **PR:** [fix: ensure section order in status grid matches section selection (BUG-004) #12](https://github.com/atassani/uned-studio/pull/12)
 - **Notes:** Fixed by passing the original section order from QuizApp to StatusGrid and sorting sections accordingly. See changelog and E2E test.
 
 ### ✅ BUG-003 — Shuffle does not work and repeats same order
