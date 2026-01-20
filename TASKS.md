@@ -19,14 +19,6 @@ Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issu
 
 ## Now
 
-### BUG-005 — When working on T/F and sequential, after interrupting with options, when resuming it goes to a random question
-
-- **Status:** backlog
-- **Priority:** P1
-- **Reported:** 2025-01-20
-- **Reporter:** TT
-- **Notes:** It may happen in MCQ.
-
 ### BUG-004 Sections in the grid should always be listed in the same order, the same one used when offering sections to choose from: the one in the file
 
 - **Status:** backlog
@@ -34,6 +26,14 @@ Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issu
 - **Reported:** 2025-01-20
 - **Reporter:** TT
 - **Notes:** I haven't checked how they appear in Section selection, but in the grid they appear in a different order than in the file. In IPC I saw Exams and sections mixed up.
+
+### BUG-005 — When working on T/F and sequential, after interrupting with options, when resuming it goes to a random question
+
+- **Status:** backlog
+- **Priority:** P1
+- **Reported:** 2025-01-20
+- **Reporter:** TT
+- **Notes:** It may happen in MCQ.
 
 ### FEAT-004 — Show the question in the grid when clicking
 
