@@ -50,3 +50,6 @@ node_modules/
 public/areas-mcq-tests.json
 public/questions-mcq-tests.json
 tests/e2e/tempCodeRunnerFile.ts
+scripts/tag.sh
+.gitignore
+scripts/deploy.sh
