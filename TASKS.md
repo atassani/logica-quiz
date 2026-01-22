@@ -12,12 +12,20 @@ Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issu
 ## Last number
 
 - FEAT: 9
-- BUG: 6
+- BUG: 7
 - TECH: 7
 
 ---
 
 ## Now
+
+### BUG-007 — When showing detailed answer on the Grid of MCQ questions, the question letter is shown as the full answer text, callcaps, instead of just the letter
+
+- **Status:** backlog
+- **Priority:** [P1/P2/P3]
+- **Reported:** YYYY-MM-DD
+- **Reporter:** TT
+- **Notes:** Using better the screen, it could be a cross on the wrong answer instead
 
 ### TECH-002 — Consolidate localStorage keys under a single root key
 
