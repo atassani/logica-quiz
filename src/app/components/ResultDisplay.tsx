@@ -48,8 +48,24 @@ export function ResultDisplay({
         )}
         {current !== null && questions[current] && (
           <>
-            <div className="font-bold text-lg">
-              {EMOJI_SECTION} {questions[current].section}
+            <div className="flex items-center justify-between mb-2">
+              <div className="font-bold text-lg flex-1">
+                {EMOJI_SECTION} {questions[current].section}
+              </div>
+              <button
+                className="ml-2 text-2xl"
+                aria-label="Opciones"
+                onClick={() => handleContinue('E')}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '1.5rem',
+                  cursor: 'pointer',
+                  padding: 0,
+                }}
+              >
+                ⚙️
+              </button>
             </div>
             <div
               className="text-xl font-semibold rich-content question-text"
@@ -59,7 +75,7 @@ export function ResultDisplay({
             ></div>
           </>
         )}
-        <div className="text-2xl">
+        <div data-testid="quiz-result-text" className="text-2xl">
           {showResult.correct ? EMOJI_SUCCESS + ' ¡Correcto!' : EMOJI_FAIL + ' Incorrecto.'}
         </div>
         <div
@@ -102,12 +118,6 @@ export function ResultDisplay({
             onClick={() => handleContinue('C')}
           >
             Continuar
-          </button>
-          <button
-            className="px-4 py-2 bg-gray-400 text-white rounded"
-            onClick={() => handleContinue('E')}
-          >
-            Opciones
           </button>
         </div>
       </div>

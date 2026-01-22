@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+- ui: move Options button to a cogwheel menu to improve mobile layout (FEAT-007)
+- test: improve testing logic using data-testid for result text (FEAT-007)
+
+## [1.4.3] - 2026-01-21
+
 - fix: answer shuffling now works between runs and is stable within a run (BUG-006)
 - ui: make question/answer order toggles visually and logically consistent
 
