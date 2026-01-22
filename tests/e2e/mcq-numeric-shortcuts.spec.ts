@@ -21,14 +21,14 @@ test.describe('MCQ numeric keyboard shortcuts', () => {
     await expect(optionB).toBeVisible();
 
     // Check that no result is shown yet (result element should not exist)
-    await expect(page.locator('.text-2xl')).toHaveCount(0);
+    await expect(page.getByTestId('quiz-result-text')).toHaveCount(0);
 
     // Press '2' to select the second option (should be equivalent to 'B')
     await page.keyboard.press('2');
 
     // Assert that a result is now shown (must change after key press)
-    await expect(page.locator('.text-2xl')).toBeVisible();
-    await expect(page.locator('.text-2xl')).toHaveText(/¡Correcto!|Incorrecto/);
+    await expect(page.getByTestId('quiz-result-text')).toBeVisible();
+    await expect(page.getByTestId('quiz-result-text')).toHaveText(/¡Correcto!|Incorrecto/);
 
     // Go to next question if available
     const continuarBtn = page.getByRole('button', { name: /continuar/i });
@@ -38,13 +38,13 @@ test.describe('MCQ numeric keyboard shortcuts', () => {
     }
 
     // Again, check that no result is shown yet (result element should not exist)
-    await expect(page.locator('.text-2xl')).toHaveCount(0);
+    await expect(page.getByTestId('quiz-result-text')).toHaveCount(0);
 
     // Press '1' to select the first option (should be equivalent to 'A')
     await page.keyboard.press('1');
 
     // Assert that a result is now shown
-    await expect(page.locator('.text-2xl')).toBeVisible();
-    await expect(page.locator('.text-2xl')).toHaveText(/¡Correcto!|Incorrecto/);
+    await expect(page.getByTestId('quiz-result-text')).toBeVisible();
+    await expect(page.getByTestId('quiz-result-text')).toHaveText(/¡Correcto!|Incorrecto/);
   });
 });

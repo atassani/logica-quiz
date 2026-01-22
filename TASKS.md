@@ -19,14 +19,6 @@ Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issu
 
 ## Now
 
-### FEAT-007 — Move options out to a cogwheel menu
-
-- **Status:** backlog
-- **Priority:** P3
-- **Reported:** 2025-01-22
-- **Reporter:** TT
-- **Notes:** To simplify the buttons and make them fit in mobile for MCQ questions, move the Options button in the questions and answers page to a cogwheel menu in the top-right corner.
-
 ### BUG-006 — The greyed area behind the modal does not cover the full screen on desktop
 
 - **Status:** backlog
@@ -146,6 +138,15 @@ Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issu
 
 ## Done
 
+### ✅ FEAT-007 — Move options out to a cogwheel menu
+
+- **Status:** backlog
+- **Priority:** P3
+- **Reported:** 2025-01-22
+- **Reporter:** TT
+- **PR:** [ui: move Options button to a cogwheel menu to improve mobile layout (FEAT-007) #14](https://github.com/atassani/uned-studio/pull/14)
+- **Notes:** To simplify the buttons and make them fit in mobile for MCQ questions, move the Options button in the questions and answers page to a cogwheel menu in the top-right corner.
+
 ### ✅ BUG-006 — Options are always in the same order, even with shuffle enabled
 
 - **Status:** done
@@ -153,7 +154,7 @@ Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issu
 - **Reported:** 2025-01-21
 - **Completed:** 2026-01-21
 - **Reporter:** TT
-- **PR:** [fix: answer shuffling now works between runs and is stable within a run (BUG-006) #14](https://github.com/atassani/uned-studio/pull/14)
+- **PR:** [fix: answer shuffling now works between runs and is stable within a run (BUG-006) #13](https://github.com/atassani/uned-studio/pull/13)
 - **Completed:** 2026-01-21
 - **Notes:** Fixed answer shuffling logic and made toggles consistent. See E2E test bug-option-order.spec.ts.
 

@@ -25,7 +25,7 @@ test.describe('MCQ variable number of answers', () => {
 
     // Move to next question
     await page.locator('button.bg-blue-600:has-text("A")').first().click();
-    await expect(page.locator('.text-2xl')).toBeVisible();
+    await expect(page.getByTestId('quiz-result-text')).toBeVisible();
     await page.getByRole('button', { name: /continuar/i }).click();
     await waitForQuizReady(page);
 
@@ -39,7 +39,7 @@ test.describe('MCQ variable number of answers', () => {
 
     // Move to next question
     await page.locator('button.bg-blue-600:has-text("A")').first().click();
-    await expect(page.locator('.text-2xl')).toBeVisible();
+    await expect(page.getByTestId('quiz-result-text')).toBeVisible();
     await page.getByRole('button', { name: /continuar/i }).click();
     await waitForQuizReady(page);
 
@@ -54,7 +54,7 @@ test.describe('MCQ variable number of answers', () => {
 
     // Move to next question
     await page.locator('button.bg-blue-600:has-text("A")').first().click();
-    await expect(page.locator('.text-2xl')).toBeVisible();
+    await expect(page.getByTestId('quiz-result-text')).toBeVisible();
     await page.getByRole('button', { name: /continuar/i }).click();
     await waitForQuizReady(page);
 

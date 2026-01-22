@@ -36,8 +36,24 @@ export function QuestionDisplay({
       {selectedArea && (
         <div className="text-lg font-bold text-blue-600 mb-2">🎓 Área: {selectedArea.area}</div>
       )}
-      <div className="font-bold text-lg">
-        {EMOJI_SECTION} {q.section}
+      <div className="flex items-center justify-between mb-2">
+        <div className="font-bold text-lg flex-1">
+          {EMOJI_SECTION} {q.section}
+        </div>
+        <button
+          className="ml-2 text-2xl"
+          aria-label="Opciones"
+          onClick={goToStatusWithResume}
+          style={{
+            background: 'none',
+            border: 'none',
+            fontSize: '1.5rem',
+            cursor: 'pointer',
+            padding: 0,
+          }}
+        >
+          ⚙️
+        </button>
       </div>
       <div className="mt-2 text-sm">
         <div className="mt-2 text-base flex items-center gap-2">
@@ -96,12 +112,6 @@ export function QuestionDisplay({
           >
             F
           </button>
-          <button
-            className="px-6 py-2 bg-gray-400 text-white rounded text-lg"
-            onClick={goToStatusWithResume}
-          >
-            Opciones
-          </button>
         </div>
       ) : (
         // Multiple Choice A/B/C buttons
@@ -118,12 +128,6 @@ export function QuestionDisplay({
               </button>
             );
           })}
-          <button
-            className="px-6 py-2 bg-gray-400 text-white rounded text-lg"
-            onClick={goToStatusWithResume}
-          >
-            Opciones
-          </button>
         </div>
       )}
     </div>

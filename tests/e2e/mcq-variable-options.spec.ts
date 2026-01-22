@@ -26,7 +26,7 @@ test.describe('MCQ variable options (2–5)', () => {
         await expect(page.getByText(/^C\)/)).toHaveCount(0);
         // Try keyboard shortcut '1' and '2'
         await page.keyboard.press('1');
-        await expect(page.locator('.text-2xl')).toBeVisible();
+        await expect(page.getByTestId('quiz-result-text')).toBeVisible();
         await page.getByRole('button', { name: /continuar/i }).click();
         await waitForQuizReady(page);
         break;
@@ -75,7 +75,7 @@ test.describe('MCQ variable options (2–5)', () => {
         } else {
           // Goes to the next screen clicking on the first button
           await page.locator('button.bg-blue-600:has-text("A"):not([aria-label])').first().click();
-          await expect(page.locator('.text-2xl')).toBeVisible();
+          await expect(page.getByTestId('quiz-result-text')).toBeVisible;
         }
         // Go to next question
         if (await page.getByRole('button', { name: /continuar/i }).isVisible()) {
