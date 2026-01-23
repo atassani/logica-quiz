@@ -29,7 +29,7 @@ interface StatusGridProps {
 export function getUserAnswerDisplay(userAnswer: string, options?: string[]): string {
   if (!userAnswer) return '';
   if (options) {
-    const index = options.findIndex(option => option === userAnswer);
+    const index = options.findIndex((option) => option === userAnswer);
     const letter = index >= 0 ? String.fromCharCode(65 + index) : userAnswer.toUpperCase();
     const optionText = index >= 0 ? options[index] : userAnswer;
     return `${letter}) ${optionText}.`;
