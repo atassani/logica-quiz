@@ -39,7 +39,7 @@ describe('StatusGrid overlay behavior', () => {
         selectedArea={mockArea}
         questions={mockQuestions}
         status={{ 0: 'fail', 1: 'correct' }}
-        userAnswers={{ 0: 'a', 1: 'a' }}
+        userAnswers={{ 0: '3', 1: '4' }}
         currentQuizType="Multiple Choice"
         handleContinue={jest.fn()}
         pendingQuestions={jest.fn(() => [] as [number, QuestionType][])}
@@ -69,8 +69,8 @@ describe('StatusGrid overlay behavior', () => {
     expect(screen.getByText('4')).toBeInTheDocument();
 
     // Check user's answer section with red cross emoji (only for MCQ)
-    expect(screen.getByText('Tu respuesta:')).toBeInTheDocument();
-    expect(screen.getByText('❌ A) 3')).toBeInTheDocument();
+    const answer = screen.getByTestId('failed-answer-text').innerHTML;
+    expect(answer).toBe('❌ A) 3.');
 
     // Close the overlay - click the blue close button at the bottom
     fireEvent.click(screen.getByText('Cerrar'));

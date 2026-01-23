@@ -16,10 +16,10 @@ describe('StatusGrid overlay BUG-007', () => {
       section: 'Section A',
       number: 1,
       question: 'What is 2 + 2?',
-      answer: '4',
+      answer: 'One possible answer is 4',
       explanation: 'Basic arithmetic ensures 2 + 2 equals 4.',
       appearsIn: ['Exam 1'],
-      options: ['3', '4'],
+      options: ['The answer could be 3', 'One possible answer is 4'],
     },
     {
       index: 1,
@@ -39,7 +39,7 @@ describe('StatusGrid overlay BUG-007', () => {
         selectedArea={mockArea}
         questions={mockQuestions}
         status={{ 0: 'fail', 1: 'correct' }}
-        userAnswers={{ 0: '3' }} // User answered with the full text '3'
+        userAnswers={{ 0: 'The answer could be 3' }} // User answered with the full text '3'
         currentQuizType="Multiple Choice"
         handleContinue={jest.fn()}
         pendingQuestions={jest.fn(() => [] as [number, QuestionType][])}
@@ -55,7 +55,8 @@ describe('StatusGrid overlay BUG-007', () => {
     fireEvent.click(screen.getByText('1❌'));
 
     // Check that the user's answer is displayed with the letter, not the full text
-    // This is the buggy behavior: it will show '3) 3' instead of 'A) 3'
-    expect(screen.getByText('❌ A) 3')).toBeInTheDocument();
+    const failedAnswerText = screen.getByTestId('failed-answer-text').innerHTML;
+    expect(failedAnswerText).toBe('❌ A) The answer could be 3.');
+    //expect(screen.getByText('❌ A) The answer could be 3')).toBeInTheDocument();
   });
 });
