@@ -19,14 +19,6 @@ Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issu
 
 ## Now
 
-### TECH-002 — Consolidate localStorage keys under a single root key
-
-- **Status:** backlog
-- **Priority:** P3
-- **Reported:** 2025-01-16
-- **Reporter:** TT
-- **Notes:** Today we store `currentArea`, `quizStatus_*`, `questionOrder_*`, `currentQuestion_*`. Consider one `unedTestsData` object.
-
 ---
 
 ## Backlog
@@ -121,6 +113,16 @@ Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issu
 ---
 
 ## Done
+
+### ✅ TECH-002 — Consolidate localStorage keys under a single root key
+
+- **Status:** done
+- **Priority:** P3
+- **Reported:** 2025-01-16
+- **Completed:** 2026-01-25
+- - **PR:** [tech: Consolidate keys in LocalStorage (TECH-002) #16](https://github.com/atassani/uned-studio/pull/17)
+- **Reporter:** TT
+- **Notes:** Today we store `currentArea`, `quizStatus_*`, `questionOrder_*`, `currentQuestion_*`. Consider one `unedTestsData` object.
 
 ### ✅ BUG-007 — When showing detailed answer on the Grid of MCQ questions, the question letter is shown as the full answer text, allcaps, instead of just the letter
 

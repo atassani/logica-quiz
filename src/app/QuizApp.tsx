@@ -14,6 +14,7 @@ import { ResultDisplay } from './components/ResultDisplay';
 import { useQuizPersistence } from './hooks/useQuizPersistence';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { useQuizLogic } from './hooks/useQuizLogic';
+import { storage } from './storage';
 
 export default function QuizApp() {
   // Track user answers for each question (index -> answer string)
@@ -119,40 +120,24 @@ export default function QuizApp() {
       })
       .then((areasData: AreaType[]) => {
         setAreas(areasData);
-        // Migrate any old global quizStatus to per-area keys for all areas
-        const oldQuizStatus = localStorage.getItem('quizStatus');
-        if (oldQuizStatus) {
-          // Try to migrate to all areas if not already present
-          areasData.forEach((area) => {
-            const areaKey = area.shortName;
-            if (!localStorage.getItem(`quizStatus_${areaKey}`)) {
-              localStorage.setItem(`quizStatus_${areaKey}`, oldQuizStatus);
-            }
-          });
-          localStorage.removeItem('quizStatus');
-        }
         // Only show area selection if no area is selected
-        const currentAreaShortName = localStorage.getItem('currentArea');
+        const currentAreaShortName = storage.getCurrentArea();
         if (currentAreaShortName) {
           const areaToRestore = areasData.find((area) => area.shortName === currentAreaShortName);
           if (areaToRestore) {
             setSelectedArea(areaToRestore);
             setCurrentQuizType(areaToRestore.type);
             // Restore shuffleQuestions for this area
-            const savedShuffleQuestions = localStorage.getItem(
-              `shuffleQuestions_${areaToRestore.shortName}`
-            );
-            if (savedShuffleQuestions !== null) {
-              setShuffleQuestions(JSON.parse(savedShuffleQuestions));
+            const savedShuffleQuestions = storage.getAreaShuffleQuestions(areaToRestore.shortName);
+            if (typeof savedShuffleQuestions === 'boolean') {
+              setShuffleQuestions(savedShuffleQuestions);
             } else {
               setShuffleQuestions(true);
             }
             // Restore shuffleAnswers for this area
-            const savedShuffleAnswers = localStorage.getItem(
-              `shuffleAnswers_${areaToRestore.shortName}`
-            );
-            if (savedShuffleAnswers !== null) {
-              setShuffleAnswers(JSON.parse(savedShuffleAnswers));
+            const savedShuffleAnswers = storage.getAreaShuffleAnswers(areaToRestore.shortName);
+            if (typeof savedShuffleAnswers === 'boolean') {
+              setShuffleAnswers(savedShuffleAnswers);
             } else {
               setShuffleAnswers(false);
             }
@@ -186,14 +171,13 @@ export default function QuizApp() {
     setCurrentQuizType(area.type);
     setShowAreaSelection(false);
     // Track area for persistence
-    localStorage.setItem('currentArea', area.shortName);
+    storage.setCurrentArea(area.shortName);
 
     // Always load questions and restore progress if available
     const areaKey = area.shortName;
-    const savedStatus = localStorage.getItem(`quizStatus_${areaKey}`);
-    const savedCurrent = localStorage.getItem(`currentQuestion_${areaKey}`);
-    const savedSelectedQuestions = localStorage.getItem(`selectedQuestions_${areaKey}`);
-    // questionOrder_${areaKey} is now handled by shuffleQuestions state
+    const savedStatus = storage.getAreaQuizStatus(areaKey);
+    const savedCurrent = storage.getAreaCurrentQuestion(areaKey);
+    const savedSelectedQuestions = storage.getAreaSelectedQuestions(areaKey);
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/${area.file}`);
     if (currentLoadingAreaRef.current !== loadingId) return;
     if (response.ok) {
@@ -206,7 +190,7 @@ export default function QuizApp() {
       setAllQuestions(questionsWithIndex);
       let parsedStatus: Record<number, 'correct' | 'fail' | 'pending'> = {};
       if (savedStatus) {
-        parsedStatus = JSON.parse(savedStatus);
+        parsedStatus = savedStatus;
       } else {
         parsedStatus = questionsWithIndex.reduce(
           (acc: Record<number, 'correct' | 'fail' | 'pending'>, q: QuestionType) => {
@@ -219,9 +203,9 @@ export default function QuizApp() {
       setStatus(parsedStatus);
 
       // Load shuffle preference for this area from localStorage
-      const savedShuffleQuestions = localStorage.getItem(`shuffleQuestions_${areaKey}`);
+      const savedShuffleQuestions = storage.getAreaShuffleQuestions(areaKey);
       const shouldShuffleQuestions =
-        savedShuffleQuestions !== null ? JSON.parse(savedShuffleQuestions) : true;
+        savedShuffleQuestions !== undefined ? savedShuffleQuestions : true;
 
       // Order questions according to shuffle preference
       let orderedQuestions = [...questionsWithIndex];
@@ -244,11 +228,11 @@ export default function QuizApp() {
 
       // If we have saved selected questions, filter to only those questions
       if (savedSelectedQuestions) {
-        const selectedIndices = JSON.parse(savedSelectedQuestions) as number[];
+        const selectedIndices = savedSelectedQuestions;
         orderedQuestions = orderedQuestions.filter((q) => selectedIndices.includes(q.index));
       } else if (savedStatus) {
         // Legacy session without savedSelectedQuestions - infer from saved status indices
-        const statusIndices = Object.keys(JSON.parse(savedStatus)).map(Number);
+        const statusIndices = Object.keys(savedStatus).map(Number);
         orderedQuestions = orderedQuestions.filter((q) => statusIndices.includes(q.index));
       }
 
@@ -267,7 +251,7 @@ export default function QuizApp() {
         Object.values(parsedStatus).length > 0 &&
         Object.values(parsedStatus).every((s) => s !== 'pending');
       if (allAnswered) {
-        localStorage.removeItem(`currentQuestion_${areaKey}`);
+        storage.setAreaCurrentQuestion(areaKey, undefined);
         setQuestions([]);
         setCurrent(null);
         setShowSelectionMenu(true);
@@ -428,9 +412,10 @@ export default function QuizApp() {
 
       // Load saved status for this area
       const areaKey = area.shortName;
-      const savedStatus = localStorage.getItem(`quizStatus_${areaKey}`);
+
+      const savedStatus = storage.getAreaQuizStatus(areaKey);
       if (savedStatus) {
-        setStatus(JSON.parse(savedStatus));
+        setStatus(savedStatus);
       } else {
         // Initialize all questions as pending
         const pendingStatus = questionsWithIndex.reduce(
@@ -533,7 +518,7 @@ export default function QuizApp() {
       setStatus(newStatus);
       setUserAnswers((prev) => ({ ...prev, [q.index]: answerToStore }));
       const areaKey = selectedArea.shortName;
-      localStorage.setItem(`quizStatus_${areaKey}`, JSON.stringify(newStatus));
+      storage.setAreaQuizStatus(areaKey, newStatus);
       setShowResult({ correct, explanation: q.explanation });
     },
     [current, questions, status, selectedArea, currentQuizType, displayOptions]

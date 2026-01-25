@@ -1,5 +1,13 @@
 import { test, expect } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import { setupFreshTest, waitForAppReady } from './helpers';
+
+async function getCurrentAreaFromLocalStorage(page: Page) {
+  const unedStudio = await page.evaluate(() => localStorage.getItem('unedStudio'));
+  const currentArea = unedStudio ? JSON.parse(unedStudio).currentArea : null;
+  return currentArea;
+}
+
 // Clear localStorage before each test to ensure a clean state
 test.beforeEach(async ({ page }) => {
   await setupFreshTest(page);
@@ -128,27 +136,6 @@ test('shows area name in question selection menu', async ({ page }) => {
 
   // Should show area name in the question selection menu
   await expect(page.getByText('🎓 Área: Lógica I')).toBeVisible();
-});
-
-test('migrates old quizStatus to area-specific storage without .json suffix', async ({ page }) => {
-  // Set up old localStorage data
-  await page.evaluate(() => {
-    localStorage.setItem('quizStatus', '{"0": "correct", "1": "fail"}');
-  });
-
-  // Reload page to trigger migration
-  await page.reload();
-
-  // Wait for areas to load (which triggers migration)
-  await expect(page.getByText('¿Qué quieres estudiar?')).toBeVisible();
-  await expect(page.getByRole('button', { name: /Lógica I/ })).toBeVisible();
-
-  // Check that data was migrated and old data removed (now uses shortName only)
-  const newData = await page.evaluate(() => localStorage.getItem('quizStatus_log1'));
-  const oldData = await page.evaluate(() => localStorage.getItem('quizStatus'));
-
-  expect(newData).toBe('{"0": "correct", "1": "fail"}');
-  expect(oldData).toBeNull();
 });
 
 test('Multiple Choice quiz works for IPC area', async ({ page }) => {
@@ -397,7 +384,7 @@ test('remembers last studied area in localStorage', async ({ page }) => {
   await page.getByRole('button', { name: 'Todas las preguntas' }).click();
 
   // Check that currentArea is stored in localStorage (now shortName)
-  const currentArea = await page.evaluate(() => localStorage.getItem('currentArea'));
+  const currentArea = await getCurrentAreaFromLocalStorage(page);
   expect(currentArea).toBe('log1');
 
   // Go to different area
@@ -406,7 +393,7 @@ test('remembers last studied area in localStorage', async ({ page }) => {
   await page.getByRole('button', { name: /Introducción al Pensamiento Científico/ }).click();
 
   // Check that currentArea is updated (now shortName)
-  const newCurrentArea = await page.evaluate(() => localStorage.getItem('currentArea'));
+  const newCurrentArea = await getCurrentAreaFromLocalStorage(page);
   expect(newCurrentArea).toBe('ipc');
 });
 
