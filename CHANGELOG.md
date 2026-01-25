@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 - fix: Implement correct answer display in status grid for MCQs
+- tech: consolidate keys in local storage to a single object, unedStudio, for better management
 
 ## [1.4.4] - 2026-01-22
 
