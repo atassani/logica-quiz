@@ -1,6 +1,7 @@
 'use client';
 
 import { useAuth } from '../hooks/useAuth';
+import packageJson from '../../../package.json';
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading, login, loginAnonymously } = useAuth();
@@ -22,7 +23,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-zinc-50 dark:bg-black p-4">
-        <div className="w-full max-w-md bg-white dark:bg-zinc-900 rounded-lg shadow-lg p-8 text-center">
+        <div className="w-full max-w-md bg-white dark:bg-zinc-900 rounded-lg shadow-lg p-8 text-center relative">
           <div className="mb-6">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
               🎓 UNED Studio
@@ -31,7 +32,6 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
               Herramientas de estudio para asignaturas de la UNED
             </p>
           </div>
-
           <div className="mb-6">
             <p className="text-gray-700 dark:text-gray-200 mb-4">
               Accede a tests de práctica, materiales de estudio y herramientas interactivas para tus
@@ -41,7 +41,6 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
               Inicia sesión para guardar tu progreso, o úsalo de forma anónima.
             </p>
           </div>
-
           <div className="space-y-3">
             <button
               onClick={login}
@@ -75,7 +74,6 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
               Continuar como Anónimo
             </button>
           </div>
-
           <div className="mt-4 space-y-2 text-xs text-gray-500 dark:text-gray-400">
             <p>
               <strong>Con Google:</strong> Progreso guardado entre dispositivos
@@ -83,6 +81,11 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
             <p>
               <strong>Anónimo:</strong> Progreso solo en este navegador
             </p>
+          </div>
+
+          {/* Version display in bottom right corner */}
+          <div className="absolute bottom-3 right-3 text-xs text-gray-400 dark:text-gray-500">
+            v{packageJson.version}
           </div>
         </div>
       </div>

@@ -55,11 +55,7 @@ Lightweight backlog for this repo (we keep it in the repo instead of GitHub Issu
 - **Reporter:** TT
 - **Notes:**
 
-### Validate credentials are not in git
-
-### Validate a hacker cannot get rid of authentication by modifying the client
-
-### Separate data from code
+### Separate data from code, and version data?
 
 ## Protect data/API
 
